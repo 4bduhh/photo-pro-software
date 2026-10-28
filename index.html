@@ -243,10 +243,10 @@ details.card[open]>summary{margin-bottom:14px}
     <details class="card" id="align">
       <summary>Printer alignment</summary>
       <p class="tip" style="margin:0 0 4px">Cut lines a little off? Fix it once. It is remembered for each paper size.</p>
-      <div class="row"><label class="f">Move right (mm)<input type="number" id="dx" step="0.1" min="-10" max="10" value="0"></label><label class="f">Move down (mm)<input type="number" id="dy" step="0.1" min="-10" max="10" value="0"></label></div>
+      <div class="row"><label class="f">Move right (mm)<input type="number" id="dx" step="0.1" min="-150" max="150" value="0"></label><label class="f">Move down (mm)<input type="number" id="dy" step="0.1" min="-150" max="150" value="0"></label></div>
       <div class="sub">Or fix it automatically</div>
       <button class="btn alt" id="testPrint" style="width:100%">1. Print test page</button>
-      <p class="tip" style="margin-top:10px">2. Measure the gap from each paper edge to the black frame:</p>
+      <p class="tip" style="margin-top:10px">2. Measure the gap from each paper edge to the black frame. If one side is cut off, leave it empty and fill only Left and Top:</p>
       <div class="row"><label class="f">Left (mm)<input type="number" id="mL" step="0.1" min="0" max="30"></label><label class="f">Right (mm)<input type="number" id="mR" step="0.1" min="0" max="30"></label><label class="f">Top (mm)<input type="number" id="mT" step="0.1" min="0" max="30"></label><label class="f">Bottom (mm)<input type="number" id="mB" step="0.1" min="0" max="30"></label></div>
       <button class="btn" id="fixAuto" style="width:100%;margin-top:14px">3. Fix automatically</button>
     </details>
@@ -484,6 +484,7 @@ $('reset').onclick=()=>{s.photos.forEach(p=>URL.revokeObjectURL(p.url));s.photos
 /* ---------- export at 300 DPI ---------- */
 function hi(){const k=300/25.4,c=document.createElement('canvas');c.width=Math.round(P.ow*k);c.height=Math.round(P.oh*k);draw(c.getContext('2d'),P,k,false);return c;}
 function ready(){if(!s.photos.length){toast('Add a photo first.');return false;}if(P.bad||!P.n){toast('Photo does not fit on this paper.');return false;}return true;}
+function pageHTML(img,t){const W=P.ow+'mm',H=P.oh+'mm';return `<!doctype html><html><head><meta charset="utf-8"><title>${t}</title><style>@page{size:${W} ${H};margin:0}*{margin:0;padding:0;box-sizing:border-box}html,body{width:${W};height:${H};overflow:hidden;background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact}img{position:absolute;left:0;top:0;width:${W};height:${H};max-width:none;display:block}</style></head><body><img src="${img}" onload="setTimeout(function(){window.focus();print()},300)"></body></html>`;}
 function scan(){const e=$('sheet');e.classList.remove('scan');void e.offsetWidth;e.classList.add('scan');}
 function busy(title,steps,work){
   const o=$('busy'),ul=$('bSteps'),bar=$('bar'),gap=450;
@@ -492,6 +493,20 @@ function busy(title,steps,work){
   li.forEach((el,k)=>setTimeout(()=>{if(k)li[k-1].className='ok';el.className='run';bar.style.width=((k+.5)/li.length*100)+'%';},k*gap+30));
   setTimeout(()=>{try{work();}catch(e){toast('Something went wrong. Try again.');}li.forEach(x=>x.className='ok');bar.style.width='100%';},li.length*gap-120);
   setTimeout(()=>{o.hidden=true;},li.length*gap+520);
+}
+function makePdf(canvas){
+  const pdf=new jspdf.jsPDF({orientation:P.ow>P.oh?'l':'p',unit:'mm',format:[Math.min(P.ow,P.oh),Math.max(P.ow,P.oh)],compress:true});
+  pdf.addImage(canvas.toDataURL('image/jpeg',.95),'JPEG',0,0,pdf.internal.pageSize.getWidth(),pdf.internal.pageSize.getHeight());
+  return pdf;
+}
+/* Print = build a real PDF and open it in the browser's PDF viewer (print dialog opens automatically).
+   This avoids the about:blank page that printed misaligned. */
+function openPdfToPrint(w,canvas,name){
+  const pdf=makePdf(canvas);
+  pdf.autoPrint();
+  const url=pdf.output('bloburl');
+  if(w){w.location.href=url;}
+  else{pdf.save(name+'-'+Date.now()+'.pdf');toast('PDF saved. Open it and print at 100% / Actual size.');}
 }
 $('pdf').onclick=()=>{
   if(!ready())return;
@@ -504,11 +519,10 @@ $('pdf').onclick=()=>{
 };
 $('print').onclick=()=>{
   if(!ready())return;
-  const w=window.open('','_blank');if(!w){toast('Allow pop-ups to open the print window.');return;}
-  busy('Getting ready to print',['Arranging photos','Rendering at 300 DPI','Opening print window'],()=>{
-    const src=hi().toDataURL('image/jpeg',.95);
-    w.document.write(`<!doctype html><title>Print photos</title><style>@page{size:${P.ow}mm ${P.oh}mm;margin:0}html,body{margin:0;padding:0}img{display:block;width:${P.ow}mm;height:${P.oh}mm}</style><img src="${src}" onload="setTimeout(()=>print(),250)">`);
-    w.document.close();
+  if(!window.jspdf){toast('PDF tool did not load. Check internet and retry.');return;}
+  const w=window.open('','_blank');
+  busy('Getting ready to print',['Arranging photos','Rendering at 300 DPI','Opening PDF'],()=>{
+    openPdfToPrint(w,hi(),'passport-photos');
   });
 };
 
@@ -724,23 +738,28 @@ function testPage(){
   x.moveTo(W/2-6,H/2);x.lineTo(W/2+6,H/2);x.moveTo(W/2,H/2-6);x.lineTo(W/2,H/2+6);x.stroke();
   x.fillStyle='#000';x.font='3px sans-serif';x.textAlign='center';
   x.fillText('TEST PAGE · print at Actual size',W/2,H/2-10);x.fillText('Frame should be 5 mm from every edge',W/2,H/2+12);
+  x.font='2.2px sans-serif';x.lineWidth=.15;x.textAlign='left';x.beginPath();
+  for(let m=10;m<H-5;m+=10){x.moveTo(5,m);x.lineTo(m%50?9:13,m);x.fillText(m,14,m+.8);}
+  x.textAlign='center';for(let m=10;m<W-5;m+=10){x.moveTo(m,5);x.lineTo(m,m%50?9:13);x.fillText(m,m,16);}
+  x.stroke();x.textAlign='center';x.font='bold 3.4px sans-serif';x.fillText('TOP ▲ (numbers = mm from sheet top)',W/2,24);
   return c;
 }
 $('testPrint').onclick=()=>{
   if(P.bad){toast('Pick a paper that fits first.');return;}
-  const w=window.open('','_blank');if(!w){toast('Allow pop-ups to open the print window.');return;}
-  busy('Preparing test page',['Drawing test frame','Rendering at 300 DPI','Opening print window'],()=>{
-    const src=testPage().toDataURL('image/jpeg',.95);
-    w.document.write(`<!doctype html><title>Printer test</title><style>@page{size:${P.ow}mm ${P.oh}mm;margin:0}html,body{margin:0;padding:0}img{display:block;width:${P.ow}mm;height:${P.oh}mm}</style><img src="${src}" onload="setTimeout(()=>print(),250)">`);
-    w.document.close();
+  if(!window.jspdf){toast('PDF tool did not load. Check internet and retry.');return;}
+  const w=window.open('','_blank');
+  busy('Preparing test page',['Drawing test frame','Rendering at 300 DPI','Opening PDF'],()=>{
+    openPdfToPrint(w,testPage(),'printer-test');
   });
 };
 $('fixAuto').onclick=()=>{
-  const v=['mL','mR','mT','mB'].map(id=>parseFloat($(id).value));
-  if(v.some(isNaN)){toast('Type all four gaps first.');return;}
-  const [L,R,T,B]=v,cl=n=>Math.max(-10,Math.min(10,Math.round(n*10)/10));
-  s.dx=cl((R-L)/2);s.dy=cl((B-T)/2);$('dx').value=s.dx;$('dy').value=s.dy;offSave();render();
-  toast(Math.abs(L+R-10)>1.5||Math.abs(T+B-10)>1.5?'Fixed. But the printer is resizing the page. Choose Actual size / 100% in print settings.':`Fixed. Moved ${s.dx} mm across and ${s.dy} mm down.`);
+  const g=id=>{const v=parseFloat($(id).value);return isNaN(v)?null:v;},L=g('mL'),R=g('mR'),T=g('mT'),B=g('mB');
+  const cl=n=>Math.max(-150,Math.min(150,Math.round(n*10)/10));
+  if(L===null&&R===null&&T===null&&B===null){toast('Type at least the Left and Top gaps first.');return;}
+  if(L!==null&&R!==null)s.dx=cl((R-L)/2);else if(L!==null)s.dx=cl(5-L);else if(R!==null)s.dx=cl(R-5);
+  if(T!==null&&B!==null)s.dy=cl((B-T)/2);else if(T!==null)s.dy=cl(5-T);else if(B!==null)s.dy=cl(B-5);
+  $('dx').value=s.dx;$('dy').value=s.dy;offSave();render();
+  toast(`Fixed. Moved ${s.dx} mm across and ${s.dy} mm down. Print the test page again to check.`);
 };
 offLoad();
 
