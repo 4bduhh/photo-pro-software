@@ -163,7 +163,7 @@ details.card[open]>summary{margin-bottom:14px}
 <body>
 <header class="top">
   <div class="brand"><span class="logo">▣</span>PhotoPrint Pro</div>
-  <div class="topr"><span class="lic" id="aiPill" hidden></span><span class="lic" id="licPill" hidden></span><button class="link" id="reset">↺ Start over</button><button class="link" id="logout" hidden>Log out</button></div>
+  <div class="topr"><span class="lic" id="aiPill" hidden></span><span class="lic" id="licPill" hidden></span><button class="link" id="reset">Start over</button><button class="link" id="logout" hidden>Log out</button></div>
 </header>
 <div class="licbar" id="licBar" hidden></div>
 
@@ -172,7 +172,7 @@ details.card[open]>summary{margin-bottom:14px}
     <div class="sheet" id="sheet">
       <canvas id="cv"></canvas>
       <label class="drop" id="drop" for="file">
-        <div><div class="big">⇪</div><h2>Drop the photo here</h2><p>It fills the whole sheet and lines up for cutting by itself.</p><span class="btn">Choose photo</span></div>
+        <div><div class="big"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4"/><path d="M6 10l6-6 6 6"/><path d="M4 20h16"/></svg></div><h2>Drop the photo here</h2><p>It fills the whole sheet and lines up for cutting by itself.</p><span class="btn">Choose photo</span></div>
       </label>
     </div>
     <div class="status" id="status"></div>
@@ -184,14 +184,14 @@ details.card[open]>summary{margin-bottom:14px}
       <div class="thumbs" id="thumbs"></div>
       <input type="file" id="file" accept="image/*" multiple hidden>
       <div id="adjust" hidden>
-        <button class="btn" id="enhance" style="width:100%;margin-bottom:6px">✨ Enhance quality + face</button>
+        <button class="btn" id="enhance" style="width:100%;margin-bottom:6px">Enhance quality + face</button>
         <p class="tip" style="margin-top:0">Makes a low-quality photo sharper and clearer, fixes light, and brings the face out. Works offline.</p>
         <label class="f">Zoom the face <input type="range" id="zoom" min="100" max="400" value="100"></label>
         <p class="tip">Drag the photo on the sheet to move it. Every copy follows.</p>
         <div class="sub">Background</div>
         <div class="chips" id="bgs"><button class="chip on" data-bg="orig">Original</button><button class="chip" data-bg="#ffffff"><i class="sw" style="background:#fff"></i>White</button><button class="chip" data-bg="#218df6"><i class="sw" style="background:#218df6"></i>Blue</button><button class="chip" data-bg="#e2e2e2"><i class="sw" style="background:#e2e2e2"></i>Grey</button></div>
         <div class="sub">Face position</div>
-        <button class="btn alt" id="autofit" style="width:100%">✨ Auto-fit face to this size</button>
+        <button class="btn alt" id="autofit" style="width:100%">Auto-fit face to this size</button>
         <p class="tip" id="faceNote"></p>
       </div>
     </div>
@@ -235,8 +235,8 @@ details.card[open]>summary{margin-bottom:14px}
           <label class="f">Gap for cutting (mm)<input type="number" id="gap" min="0" max="15" step="0.5" value="2.5"></label>
           <label class="f">Sheet edge (mm)<input type="number" id="margin" min="0" max="20" step="0.5" value="2"></label>
         </div>
-        <label class="chk"><input type="checkbox" id="guides" checked>Cut lines between photos</label>
-        <label class="chk"><input type="checkbox" id="border">Thin outline on each photo</label>
+        <label class="chk"><input type="checkbox" id="guides" autocomplete="off">Cut lines between photos</label>
+        <label class="chk"><input type="checkbox" id="border" checked autocomplete="off">Thin outline on each photo</label>
       </details>
     </div>
 
@@ -265,7 +265,7 @@ details.card[open]>summary{margin-bottom:14px}
     <div class="glogo"><span class="logo">▣</span>PhotoPrint Pro</div>
     <div id="vLoad" class="glock"><div class="ldr"><i></i><i></i><b>▣</b></div><p class="gsub">Checking your access…</p></div>
     <form id="vLogin" hidden novalidate>
-      <h1>Welcome 👋</h1>
+      <h1>Welcome</h1>
       <p class="gsub">Enter your store details to start. New stores get a <b>free trial</b>.</p>
       <label class="gf">Store name<input id="lgName" type="text" autocomplete="organization" placeholder="e.g. Sri Murugan Photo Studio" maxlength="60"></label>
       <label class="gf">WhatsApp number<span class="pre"><b>+91</b><input id="lgWa" type="tel" inputmode="numeric" autocomplete="tel-national" placeholder="98765 43210" maxlength="20"></span></label>
@@ -274,7 +274,7 @@ details.card[open]>summary{margin-bottom:14px}
       <p class="gnote">Your WhatsApp number identifies your store. Use the same number every time.</p>
     </form>
     <div id="vLock" class="glock" hidden>
-      <div class="ic" id="lkIc">⏰</div>
+      <div class="ic" id="lkIc"></div>
       <h1 id="lkTitle">Your access has ended</h1>
       <p class="gsub" id="lkSub"></p>
       <div class="gmsg" id="lkMsg"></div>
@@ -319,7 +319,7 @@ const REGIONS=[
   {n:'China visa',w:33,h:48}]},
  {n:'Custom',docs:[]}
 ];
-const s={photos:[],active:0,region:0,doc:0,w:35,h:45,paper:'4x6',qty:0,gap:2.5,margin:2,guides:true,border:false,feed:'up'};
+const s={photos:[],active:0,region:0,doc:0,w:35,h:45,paper:'4x6',qty:0,gap:2.5,margin:2,guides:false,border:true,feed:'up'};
 const cv=$('cv'),cx=cv.getContext('2d'),K=6;
 let P=null,drag=null,tt;
 
@@ -538,7 +538,7 @@ function fstate(p){
   if(Math.abs(g.cx-s.w/2)>s.w*.06)return{msg:'Face is off-center. Drag the photo '+(g.cx>s.w/2?'left':'right')+'.'};
   if(g.cr<s.h*.03)return{msg:'Head is too high. Drag the photo down.'};
   if(g.ch>s.h*.97)return{msg:'Chin is too low. Drag the photo up.'};
-  return{ok:1,msg:'Face size and position look right ✓'};
+  return{ok:1,msg:'Face size and position look right'};
 }
 function guide(c,sl,p){
   const g=fstate(p),sp=spec(),hh=sp.t*s.h,tm=(1-sp.t)*.4*s.h;c.save();
@@ -546,7 +546,7 @@ function guide(c,sl,p){
   c.setLineDash([1.6,1.1]);c.strokeStyle='#ffffffdd';c.lineWidth=.35;c.beginPath();c.ellipse(sl.x+sl.w/2,sl.y+tm+hh/2,hh*.36,hh/2,0,0,7);c.stroke();c.restore();
 }
 function faceNote(){
-  const e=$('faceNote'),p=s.photos[s.active];e.className='tip';e.textContent='';if(!p)return;const eb=$('enhance');if(eb&&!enhBusy)eb.textContent=p.enh?'↩ Restore original photo':'✨ Enhance quality + face';
+  const e=$('faceNote'),p=s.photos[s.active];e.className='tip';e.textContent='';if(!p)return;const eb=$('enhance');if(eb&&!enhBusy)eb.textContent=p.enh?'Restore original photo':'Enhance quality + face';
   if(p.busy){e.className='tip wait';e.textContent='Finding the face…';}
   else if(p.face){const g=fstate(p);e.className='tip '+(g.ok?'ok':'bad');e.textContent=g.msg;}
   else if(p.err){e.className='tip bad';e.textContent='Face check needs internet the first time.';}
@@ -621,7 +621,7 @@ $('enhance').onclick=async()=>{
     const out=await enhance(p,T);
     p.raw=p.orig;p.orig=out;p.enh=true;compose(p);if(p.face)fit(p);
     T.at(4,0);render();setTimeout(()=>T.end(),400);
-    toast(p.face?'Enhanced ✓ Face and photo made clearer. Tap again to restore original.':'Enhanced ✓ (no face found, so whole photo improved).');
+    toast(p.face?'Enhanced. Face and photo made clearer. Tap again to restore original.':'Enhanced (no face found, so whole photo improved).');
   }catch(e){T.end();toast('Could not enhance this photo. Try a smaller image.');}
   enhBusy=false;render();
 };
@@ -638,7 +638,7 @@ let warmed=0,warmP=null;
 function warm(){
   if(IMGBAD||warmed||!navigator.onLine)return;warmed=1;const pl=$('aiPill');pl.hidden=false;pl.textContent='AI getting ready…';
   try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist();}catch(e){}
-  warmP=bgMod().then(async m=>{if(!m.preload)return;for(let k=0;k<CFGS.length;k++){try{await m.preload({...CFGS[k],progress:prog});CFGi=k;return;}catch(e){lastErr=em(e);}}throw new Error(lastErr||'download failed');}).then(()=>{pl.textContent='AI ready ✓';setTimeout(()=>{pl.hidden=true;},4000);}).catch(()=>{warmed=0;pl.hidden=true;});
+  warmP=bgMod().then(async m=>{if(!m.preload)return;for(let k=0;k<CFGS.length;k++){try{await m.preload({...CFGS[k],progress:prog});CFGi=k;return;}catch(e){lastErr=em(e);}}throw new Error(lastErr||'download failed');}).then(()=>{pl.textContent='AI ready';setTimeout(()=>{pl.hidden=true;},4000);}).catch(()=>{warmed=0;pl.hidden=true;});
 }
 function task(title,steps){
   const o=$('busy'),ul=$('bSteps'),bar=$('bar');$('bTitle').textContent=title;ul.innerHTML=steps.map(t=>`<li>${t}</li>`).join('');bar.style.width='0';o.hidden=false;
@@ -650,7 +650,7 @@ function prog(k,a,t){
   k=String(k);
   if(k.startsWith('fetch')){
     const x=t?Math.round(a/t*100)+'%':(a/1048576|0)+' MB',pl=$('aiPill');
-    if(!pl.hidden&&warmed===1&&pl.textContent.indexOf('ready ✓')<0)pl.textContent='AI getting ready… '+x;
+    if(!pl.hidden&&warmed===1&&pl.textContent.indexOf('AI ready')<0)pl.textContent='AI getting ready… '+x;
     if(curT){curT.txt(0,'Loading AI… '+x+' (first time only)');if(t)curT.at(0,a/t);}
   }else if(k.startsWith('compute')&&curT&&t)curT.at(1,a/t);
 }
@@ -820,15 +820,15 @@ function lockScreen(kind){
   $('licPill').hidden=true;$('licBar').hidden=true;$('logout').hidden=false;
   let ic,title,sub,msg;
   if(kind==='blocked'){
-    ic='⏸️';title='Access paused';sub=`${store} · ${mine}`;
+    ic='<svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M10 9v6M14 9v6"/></svg>';title='Access paused';sub=`${store} · ${mine}`;
     msg=`Hello! I'm from ${store} (WhatsApp ${mine}). My PhotoPrint Pro access is paused. Please help me get it activated.`;
   }else if(kind==='offline'){
-    ic='📶';title='Connect to the internet';sub='We need to verify your access once. Check your connection and try again.';msg='';
+    ic='<svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9a15 15 0 0 1 20 0"/><path d="M5 12.5a10 10 0 0 1 14 0"/><path d="M8.5 16a5 5 0 0 1 7 0"/><path d="M12 20h.01"/></svg>';title='Connect to the internet';sub='We need to verify your access once. Check your connection and try again.';msg='';
   }else{
-    ic='⏰';title='Your access has ended';sub=`${store} · ended on ${date}`+(std?` · Renew plan: ${std}`:'');
+    ic='<svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2"/><path d="M9 2h6"/></svg>';title='Your access has ended';sub=`${store} · ended on ${date}`+(std?` · Renew plan: ${std}`:'');
     msg=`Hello! I'm from ${store} (WhatsApp ${mine}). My PhotoPrint Pro access ended on ${date}. Please renew my access${std?' for the '+std+' plan':''}.`;
   }
-  $('lkIc').textContent=ic;$('lkTitle').textContent=title;$('lkSub').textContent=sub;
+  $('lkIc').innerHTML=ic;$('lkTitle').textContent=title;$('lkSub').textContent=sub;
   $('lkMsg').hidden=$('lkWa').hidden=$('lkHint').hidden=!msg;$('lkMsg').textContent=msg;
   $('lkWa').href=wa(num,msg);$('lkWa').dataset.msg=msg;
   $('lkCheck').textContent=kind==='offline'?'Try again':"I'm renewed, check again";
@@ -842,7 +842,7 @@ function unlock(){
   const bar=$('licBar');
   if(!forever&&d<=5){
     const m=`Hello! I'm from ${S.store_name} (WhatsApp ${pretty(S.whatsapp)}). My PhotoPrint Pro access ends on ${fdate(S.expires_at)}. I'd like to renew${S.std?' the '+S.std+' plan':''}.`;
-    bar.innerHTML=`<span>⚠️ Your access ends ${d<=0?'today':'in '+d+' day'+(d===1?'':'s')} (${fdate(S.expires_at)}).</span><a class="btn wa" style="padding:9px 14px;font-size:14px" target="_blank" rel="noopener" href="${wa((S.contact||LIC.CONTACT_WA),m)}">Renew on WhatsApp</a>`;
+    bar.innerHTML=`<span>Your access ends ${d<=0?'today':'in '+d+' day'+(d===1?'':'s')} (${fdate(S.expires_at)}).</span><a class="btn wa" style="padding:9px 14px;font-size:14px" target="_blank" rel="noopener" href="${wa((S.contact||LIC.CONTACT_WA),m)}">Renew on WhatsApp</a>`;
     bar.hidden=false;bar.querySelector('a').onclick=()=>api.request(S.whatsapp).catch(()=>{});
   }else bar.hidden=true;
 }
