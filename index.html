@@ -499,11 +499,10 @@ function makePdf(canvas){
   pdf.addImage(canvas.toDataURL('image/jpeg',.95),'JPEG',0,0,pdf.internal.pageSize.getWidth(),pdf.internal.pageSize.getHeight());
   return pdf;
 }
-/* Print = build a real PDF and open it in the browser's PDF viewer (print dialog opens automatically).
+/* Print = build a real PDF and open it in the browser's PDF viewer (print from the viewer's print button).
    This avoids the about:blank page that printed misaligned. */
 function openPdfToPrint(w,canvas,name){
   const pdf=makePdf(canvas);
-  pdf.autoPrint();
   const url=pdf.output('bloburl');
   if(w){w.location.href=url;}
   else{pdf.save(name+'-'+Date.now()+'.pdf');toast('PDF saved. Open it and print at 100% / Actual size.');}
