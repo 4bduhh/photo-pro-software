@@ -3,17 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#14295a">
-<link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="48x48" href="icons/favicon-48.png">
-<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="PhotoPrint Pro">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#e4e9f1">
 <title>PhotoPrint Pro – Passport Photo Printing</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="manifest" href="manifest.json">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 :root{--ink:#16233f;--navy:#14295a;--gold:#f4b52e;--gold2:#ffd35f;--teal:#35e0bd;--bg:#e4e9f1;--hi:#fff;--lo:#bcc5d4;--muted:#5d6a7e;--r:22px;--raise:8px 8px 18px var(--lo),-8px -8px 18px var(--hi);--raise-s:4px 4px 10px var(--lo),-4px -4px 10px var(--hi);--inset:inset 4px 4px 9px var(--lo),inset -4px -4px 9px var(--hi)}
@@ -164,29 +158,12 @@ details.card>summary{margin:0;font:800 17px 'Bricolage Grotesque',sans-serif;col
 details.card[open]>summary{margin-bottom:14px}
 @media(max-width:900px){main{grid-template-columns:1fr}.stage{position:static;min-height:0}.sheet{width:min(100%,calc(62vh*var(--ar,1.5)))}.top{top:6px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
-/* ---- install app ---- */
-.instbtn{background:linear-gradient(145deg,var(--gold2),var(--gold));border:0;color:#2a1d00;font-weight:700;padding:9px 14px;border-radius:12px;box-shadow:var(--raise-s);display:inline-flex;align-items:center;gap:6px;transition:.2s}
-.instbtn:active{transform:scale(.97)}
-.instov{position:fixed;inset:0;z-index:300;display:grid;place-items:end center;padding:16px;background:rgba(8,16,38,.55);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);animation:fade .25s both}
-@media(min-width:620px){.instov{place-items:center}}
-.instcard{position:relative;width:min(100%,420px);border-radius:28px;padding:26px 24px 22px;text-align:center;color:#fff;background:radial-gradient(circle at 0 0,#0a4dff88,transparent 55%),radial-gradient(circle at 100% 100%,#0a4dff77,transparent 55%),linear-gradient(160deg,#05122e,#00030e);border:1px solid #ffffff30;box-shadow:0 30px 70px #000a,inset 0 1px 0 #ffffff30;animation:rise .45s cubic-bezier(.2,.8,.2,1) both}
-.instcard img{width:92px;height:92px;border-radius:24px;box-shadow:0 12px 30px #0a4dff66,0 0 0 1px #ffffff30;display:block;margin:0 auto 14px}
-.instcard h3{margin:0 0 6px;font:800 22px 'Bricolage Grotesque',sans-serif;letter-spacing:-.4px}
-.instcard p{margin:0 0 18px;opacity:.8;font-size:14px}
-.instcard ul{list-style:none;margin:0 0 18px;padding:0;display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
-.instcard li{font-size:12px;font-weight:600;padding:6px 11px;border-radius:99px;background:#ffffff1c;border:1px solid #ffffff2e}
-.instgo{width:100%;border:0;border-radius:16px;padding:14px;font-weight:800;font-size:16px;color:#2a1d00;background:linear-gradient(145deg,var(--gold2),var(--gold));box-shadow:0 10px 24px #f4b52e55}
-.instgo:active{transform:scale(.98)}
-.instlater{background:none;border:0;color:#ffffffb0;font-weight:600;margin-top:12px;padding:6px 10px}
-.instios{text-align:left;font-size:14px;margin:0 0 16px;padding:14px 16px 14px 34px;border-radius:16px;background:#ffffff14;border:1px solid #ffffff26}
-.instios li{display:list-item;background:none;border:0;border-radius:0;padding:3px 0;font-size:14px;font-weight:500}
-.instios b{color:var(--gold2)}
 </style>
 </head>
 <body>
 <header class="top">
   <div class="brand"><span class="logo">▣</span>PhotoPrint Pro</div>
-  <div class="topr"><span class="lic" id="aiPill" hidden></span><span class="lic" id="licPill" hidden></span><button class="instbtn" id="instBtn" hidden>⬇ Install app</button><button class="link" id="reset">↺ Start over</button><button class="link" id="logout" hidden>Log out</button></div>
+  <div class="topr"><span class="lic" id="aiPill" hidden></span><span class="lic" id="licPill" hidden></span><button class="link" id="reset">↺ Start over</button><button class="link" id="logout" hidden>Log out</button></div>
 </header>
 <div class="licbar" id="licBar" hidden></div>
 
@@ -207,10 +184,12 @@ details.card[open]>summary{margin-bottom:14px}
       <div class="thumbs" id="thumbs"></div>
       <input type="file" id="file" accept="image/*" multiple hidden>
       <div id="adjust" hidden>
+        <button class="btn" id="enhance" style="width:100%;margin-bottom:6px">✨ Enhance quality + face</button>
+        <p class="tip" style="margin-top:0">Makes a low-quality photo sharper and clearer, fixes light, and brings the face out. Works offline.</p>
         <label class="f">Zoom the face <input type="range" id="zoom" min="100" max="400" value="100"></label>
         <p class="tip">Drag the photo on the sheet to move it. Every copy follows.</p>
         <div class="sub">Background</div>
-        <div class="chips" id="bgs"><button class="chip on" data-bg="orig">Original</button><button class="chip" data-bg="#ffffff"><i class="sw" style="background:#fff"></i>White</button><button class="chip" data-bg="#bfd9f2"><i class="sw" style="background:#bfd9f2"></i>Blue</button><button class="chip" data-bg="#e2e2e2"><i class="sw" style="background:#e2e2e2"></i>Grey</button></div>
+        <div class="chips" id="bgs"><button class="chip on" data-bg="orig">Original</button><button class="chip" data-bg="#ffffff"><i class="sw" style="background:#fff"></i>White</button><button class="chip" data-bg="#218df6"><i class="sw" style="background:#218df6"></i>Blue</button><button class="chip" data-bg="#e2e2e2"><i class="sw" style="background:#e2e2e2"></i>Grey</button></div>
         <div class="sub">Face position</div>
         <button class="btn alt" id="autofit" style="width:100%">✨ Auto-fit face to this size</button>
         <p class="tip" id="faceNote"></p>
@@ -567,7 +546,7 @@ function guide(c,sl,p){
   c.setLineDash([1.6,1.1]);c.strokeStyle='#ffffffdd';c.lineWidth=.35;c.beginPath();c.ellipse(sl.x+sl.w/2,sl.y+tm+hh/2,hh*.36,hh/2,0,0,7);c.stroke();c.restore();
 }
 function faceNote(){
-  const e=$('faceNote'),p=s.photos[s.active];e.className='tip';e.textContent='';if(!p)return;
+  const e=$('faceNote'),p=s.photos[s.active];e.className='tip';e.textContent='';if(!p)return;const eb=$('enhance');if(eb&&!enhBusy)eb.textContent=p.enh?'↩ Restore original photo':'✨ Enhance quality + face';
   if(p.busy){e.className='tip wait';e.textContent='Finding the face…';}
   else if(p.face){const g=fstate(p);e.className='tip '+(g.ok?'ok':'bad');e.textContent=g.msg;}
   else if(p.err){e.className='tip bad';e.textContent='Face check needs internet the first time.';}
@@ -580,6 +559,72 @@ async function findFace(p){
 }
 $('autofit').onclick=()=>{const p=s.photos[s.active];if(!p)return;if(p.face){fit(p);render();}else findFace(p);};
 async function afterAdd(p){await findFace(p);if(s.bg!=='orig')applyBg();else if(navigator.onLine||RBok){warm();startCut(p).catch(()=>{});}}
+
+/* ---------- enhance: quality + face ---------- */
+let enhBusy=false;const nap=()=>new Promise(r=>setTimeout(r,30));
+function hpass(a,o,w,h,r){const n=2*r+1;for(let y=0;y<h;y++){const b=y*w;let sm=0;for(let i=-r;i<=r;i++)sm+=a[b+Math.min(w-1,Math.max(0,i))];
+  for(let x=0;x<w;x++){o[b+x]=sm/n;sm+=a[b+Math.min(w-1,x+r+1)]-a[b+Math.max(0,x-r)];}}}
+function vpass(a,o,w,h,r){const n=2*r+1,cs=new Float32Array(w);for(let i=-r;i<=r;i++){const b=Math.min(h-1,Math.max(0,i))*w;for(let x=0;x<w;x++)cs[x]+=a[b+x];}
+  for(let y=0;y<h;y++){const b=y*w,add=Math.min(h-1,y+r+1)*w,sub=Math.max(0,y-r)*w;for(let x=0;x<w;x++){o[b+x]=cs[x]/n;cs[x]+=a[add+x]-a[sub+x];}}}
+function blur(src,w,h,r,tmp){const o=new Float32Array(src.length);hpass(src,tmp,w,h,r);vpass(tmp,o,w,h,r);hpass(o,tmp,w,h,r);vpass(tmp,o,w,h,r);return o;}
+async function enhance(p,T){
+  const raw=p.orig,rw=raw.width,rh=raw.height,L0=Math.max(rw,rh);
+  let f=1;if(L0<2400)f=Math.min(3,2400/L0);else if(L0>3200)f=3200/L0;
+  const W=Math.round(rw*f),H=Math.round(rh*f);
+  /* 1 - resolution: step-wise upscale gives a cleaner result than one big jump */
+  T.at(1,0);await nap();
+  let cur=raw,cw=rw;
+  do{const nw=f>1?Math.min(W,Math.round(cw*1.5)):W,nh=nw>=W?H:Math.round(nw*rh/rw),c=document.createElement('canvas');c.width=nw;c.height=nh;
+    const x=c.getContext('2d');x.imageSmoothingEnabled=true;x.imageSmoothingQuality='high';x.drawImage(cur,0,0,nw,nh);cur=c;cw=nw;}while(cw<W);
+  const cx=cur.getContext('2d'),id=cx.getImageData(0,0,W,H),d=id.data,N=W*H,fc=p.face;
+  /* face weight map: 255 on the face, fading out to 0 around it */
+  const wm=new Uint8Array(N);let fx=0,fy=0,rx=1,ry=1;
+  if(fc){const hh=(fc.ch-fc.cr)*H;fx=fc.cx*W;fy=(fc.cr+fc.ch)/2*H;rx=hh*.42;ry=hh*.55;
+    for(let y=0;y<H;y++){const dy=(y-fy)/ry,dy2=dy*dy;if(dy2>2.6)continue;for(let x=0;x<W;x++){const dx=(x-fx)/rx,e=Math.sqrt(dx*dx+dy2);
+      if(e<1)wm[y*W+x]=255;else if(e<1.6){const u=(1.6-e)/.6;wm[y*W+x]=u*u*(3-2*u)*255;}}}}
+  /* 2 - light & colour: auto levels + brighten a dark face */
+  T.at(2,0);await nap();
+  const hist=new Uint32Array(256);let cnt=0;for(let i=0;i<N;i+=3){hist[(d[i*4]*.299+d[i*4+1]*.587+d[i*4+2]*.114)|0]++;cnt++;}
+  let lo=0,hi=255,a=0;for(let i=0;i<256;i++){a+=hist[i];if(a>=cnt*.005){lo=i;break;}}a=0;for(let i=255;i>=0;i--){a+=hist[i];if(a>=cnt*.005){hi=i;break;}}
+  lo=Math.min(lo,50);hi=Math.max(hi,200);
+  const lvl=new Float32Array(256);for(let i=0;i<256;i++){const v=Math.min(1,Math.max(0,(i-lo)/(hi-lo)));lvl[i]=255*(.75*v+.25*i/255);}
+  let fs=0,fn=0;
+  for(let y=0;y<H;y+=4)for(let x=0;x<W;x+=4){const i=y*W+x;if(wm[i]===255){fs+=lvl[(d[i*4]*.299+d[i*4+1]*.587+d[i*4+2]*.114)|0];fn++;}}
+  let gm=1,gIn=1;
+  if(fn>50){const m=Math.min(.95,Math.max(.05,fs/fn/255));gIn=Math.min(1.35,Math.max(.65,Math.log(.56)/Math.log(m)));if(Math.abs(gIn-1)<.05)gIn=1;gm=1+(gIn-1)*.5;}
+  else{let s2=0;for(let i=0;i<256;i++)s2+=hist[i]*lvl[i];const m=Math.min(.95,Math.max(.05,s2/cnt/255));gm=Math.min(1.2,Math.max(.8,Math.log(.5)/Math.log(m)));gm=1+(gm-1)*.6;gIn=gm;}
+  const lo2=new Uint8ClampedArray(256),li2=new Uint8ClampedArray(256);
+  for(let i=0;i<256;i++){lo2[i]=255*Math.pow(lvl[i]/255,gm);li2[i]=255*Math.pow(lvl[i]/255,gIn);}
+  for(let i=0;i<N;i++){const w=wm[i]/255,k=i*4;for(let c=0;c<3;c++){const v=d[k+c],o=lo2[v];d[k+c]=o+(li2[v]-o)*w;}}
+  /* 3 - detail: remove noise, then sharpen (extra on the face) and add local contrast */
+  T.at(3,0);await nap();
+  const Y=new Float32Array(N),tmp=new Float32Array(N);
+  for(let i=0;i<N;i++)Y[i]=d[i*4]*.299+d[i*4+1]*.587+d[i*4+2]*.114;
+  const LL=Math.max(W,H),r1=Math.max(1,Math.round(LL/1500)),r2=Math.max(8,Math.round(LL/70));
+  const Y1=blur(Y,W,H,r1,tmp);await nap();const Y2=blur(Y,W,H,r2,tmp);await nap();
+  const th2=3.2*3.2;
+  for(let i=0;i<N;i++){
+    const w=wm[i]/255,dd=Y[i]-Y1[i],g=dd*dd/(dd*dd+th2);
+    let det=dd*g*(1.7+.8*w);det=Math.max(-45,Math.min(45,det));
+    let lc=(Y1[i]-Y2[i])*(.08+.17*w);lc=Math.max(-22,Math.min(22,lc));
+    const dl=Y1[i]+det+lc-Y[i],k=i*4;d[k]+=dl;d[k+1]+=dl;d[k+2]+=dl;
+  }
+  cx.putImageData(id,0,0);return cur;
+}
+$('enhance').onclick=async()=>{
+  const p=s.photos[s.active];if(!p){toast('Add a photo first.');return;}if(enhBusy)return;
+  if(p.enh){p.orig=p.raw;p.enh=false;compose(p);if(p.face)fit(p);render();toast('Original photo restored.');return;}
+  enhBusy=true;const T=task('Enhancing photo',['Finding the face','Increasing resolution','Fixing light & colour','Sharpening face & details']);
+  try{
+    T.at(0,.3);await nap();
+    if(!p.face){try{await findFace(p);}catch(e){}}
+    const out=await enhance(p,T);
+    p.raw=p.orig;p.orig=out;p.enh=true;compose(p);if(p.face)fit(p);
+    T.at(4,0);render();setTimeout(()=>T.end(),400);
+    toast(p.face?'Enhanced ✓ Face and photo made clearer. Tap again to restore original.':'Enhanced ✓ (no face found, so whole photo improved).');
+  }catch(e){T.end();toast('Could not enhance this photo. Try a smaller image.');}
+  enhBusy=false;render();
+};
 
 /* ---------- background remove ---------- */
 s.bg='orig';let RB;
@@ -645,6 +690,11 @@ function startCut(p){
 }
 function compose(p){
   if(s.bg==='orig'||!p.cut){p.img=p.orig;return;}
+  if(p.enh&&p.orig.width>p.cut.width*1.1){/* enhanced photo: use the cut-out only as a mask so full detail is kept */
+    const W=p.orig.width,H=p.orig.height,m=document.createElement('canvas');m.width=W;m.height=H;const mx=m.getContext('2d');
+    mx.imageSmoothingQuality='high';mx.drawImage(p.cut,0,0,W,H);mx.globalCompositeOperation='source-in';mx.drawImage(p.orig,0,0);
+    const c2=document.createElement('canvas');c2.width=W;c2.height=H;const x2=c2.getContext('2d');x2.fillStyle=s.bg;x2.fillRect(0,0,W,H);x2.drawImage(m,0,0);p.img=c2;return;
+  }
   const c=document.createElement('canvas');c.width=p.cut.width;c.height=p.cut.height;const x=c.getContext('2d');
   x.fillStyle=s.bg;x.fillRect(0,0,c.width,c.height);x.drawImage(p.cut,0,0);p.img=c;
 }
@@ -851,50 +901,22 @@ try{S=JSON.parse(localStorage.getItem(SK)||'null');}catch(e){S=null;}
 if(S&&S.whatsapp){view('vLoad');verify();}else showLogin();
 })();
 </script>
-<div class="instov" id="instOv" role="dialog" aria-modal="true" aria-labelledby="instT" hidden>
-  <div class="instcard">
-    <img src="icons/icon-192.png" alt="App icon">
-    <h3 id="instT">Install PhotoPrint Pro</h3>
-    <p id="instP">Get it on your home screen or desktop. Opens full-screen, loads fast and works with a weak connection.</p>
-    <ul id="instTags"><li>Desktop</li><li>Android</li><li>iPhone / iPad</li></ul>
-    <ol class="instios" id="instIos" hidden>
-      <li>Tap the <b>Share</b> button in Safari</li>
-      <li>Choose <b>Add to Home Screen</b></li>
-      <li>Tap <b>Add</b></li>
-    </ol>
-    <button class="instgo" id="instGo">⬇ Install now</button>
-    <button class="instlater" id="instLater">Not now</button>
-  </div>
-</div>
 <script>
-(function(){
-  if('serviceWorker' in navigator&&(location.protocol==='https:'||location.hostname==='localhost')){
-    window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
-  }
-  const $=id=>document.getElementById(id),DK='ppp_install_dismissed',DAYS=7;
-  const standalone=()=>matchMedia('(display-mode: standalone)').matches||matchMedia('(display-mode: window-controls-overlay)').matches||navigator.standalone===true;
-  const ua=navigator.userAgent,isIOS=/iphone|ipad|ipod/i.test(ua)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
-  let dp=null,timer=null;
-  const recentlyDismissed=()=>{try{return Date.now()-(+localStorage.getItem(DK)||0)<DAYS*864e5;}catch(e){return false;}};
-  const open=ios=>{if(standalone())return;$('instIos').hidden=!ios;$('instTags').hidden=ios;$('instGo').hidden=ios;$('instLater').textContent=ios?'Got it':'Not now';$('instOv').hidden=false;};
-  const close=remember=>{$('instOv').hidden=true;if(remember){try{localStorage.setItem(DK,Date.now());}catch(e){}}};
-  if(standalone())return;
-  window.addEventListener('beforeinstallprompt',e=>{
-    e.preventDefault();dp=e;$('instBtn').hidden=false;
-    if(!recentlyDismissed())timer=setTimeout(()=>open(false),2500);
+/* PWA auto-update */
+if('serviceWorker' in navigator){
+  let reloading=false;
+  navigator.serviceWorker.addEventListener('controllerchange',()=>{
+    if(reloading)return;reloading=true;location.reload();
   });
-  window.addEventListener('appinstalled',()=>{dp=null;clearTimeout(timer);close(false);$('instBtn').hidden=true;});
-  if(isIOS){$('instBtn').hidden=false;if(!recentlyDismissed())timer=setTimeout(()=>open(true),3000);}
-  $('instBtn').onclick=()=>{if(dp)open(false);else if(isIOS)open(true);};
-  $('instGo').onclick=async()=>{
-    if(!dp){close(false);return;}
-    dp.prompt();const r=await dp.userChoice.catch(()=>({}));dp=null;close(r.outcome!=='accepted');
-    if(r.outcome==='accepted')$('instBtn').hidden=true;
-  };
-  $('instLater').onclick=()=>close(true);
-  $('instOv').addEventListener('click',e=>{if(e.target===$('instOv'))close(true);});
-  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('instOv').hidden)close(true);});
-})();
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('./sw.js',{updateViaCache:'none'}).then(reg=>{
+      const check=()=>reg.update().catch(()=>{});
+      check();
+      document.addEventListener('visibilitychange',()=>{if(!document.hidden)check();});
+      setInterval(check,30*60*1000);
+    }).catch(()=>{});
+  });
+}
 </script>
 </body>
 </html>
