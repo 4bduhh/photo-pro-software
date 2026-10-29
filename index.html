@@ -82,6 +82,7 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border-radius:50%;bor
 .chips{display:flex;flex-wrap:wrap;gap:10px}
 .chip{border:0;background:var(--bg);border-radius:99px;padding:8px 14px;font-size:13px;font-weight:600;box-shadow:var(--raise-s);transition:.2s}
 .chip:active{box-shadow:var(--inset)}
+.chip:disabled{opacity:1}
 .chip small{color:var(--muted);font-weight:500}
 .chip.on{background:linear-gradient(145deg,#24489c,#14295a);color:#fff;box-shadow:0 6px 16px #14295a66,inset 0 1px 0 #ffffff30}
 .chip.on small{color:#c3d3ff}
@@ -150,6 +151,29 @@ details summary{cursor:pointer;font-weight:600;color:var(--muted);margin-top:16p
 .sw{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:6px;vertical-align:-1px;box-shadow:0 0 0 1px #0003}
 .btn.alt{background:var(--bg);color:var(--navy);box-shadow:var(--raise-s)}
 .btn.alt:active{box-shadow:var(--inset)}
+.pqcard{position:relative;width:min(400px,calc(100% - 32px));max-height:calc(100vh - 24px);overflow:auto;padding:26px;border-radius:32px;color:var(--ink);background:linear-gradient(145deg,#f0f4fa,#d9e0ec);border:1px solid #ffffffb0;box-shadow:22px 22px 55px #030a1c99,-10px -10px 40px #ffffff22,inset 2px 2px 3px #fff,inset -3px -3px 8px #b9c3d4;animation:rise .45s cubic-bezier(.2,.8,.2,1) both}
+.pqcard::before{content:"";position:absolute;left:0;right:0;top:0;height:5px;background:linear-gradient(90deg,var(--teal),#86a8ff,var(--gold2))}
+.pqhead{display:flex;align-items:center;gap:14px;margin-bottom:20px}
+.pqico{flex:none;width:54px;height:54px;border-radius:18px;display:grid;place-items:center;font-size:25px;background:linear-gradient(145deg,#f4f7fc,#d6deea);box-shadow:var(--raise-s),inset 0 1px 0 #fff}
+.pqhead h3{margin:0;font:800 23px 'Bricolage Grotesque',sans-serif;letter-spacing:-.4px;color:var(--navy)}
+.pqhead p{margin:2px 0 0;font-size:13px;color:var(--muted)}
+.pqtile{position:relative;overflow:hidden;display:flex;align-items:center;gap:14px;padding:14px;border-radius:22px;background:var(--bg);box-shadow:var(--inset)}
+.pqtile::after{content:"";position:absolute;inset:0;background:linear-gradient(105deg,transparent 35%,#ffffff88 50%,transparent 65%);transform:translateX(-120%);animation:pqshine 3.6s ease-in-out infinite;pointer-events:none}
+@keyframes pqshine{to{transform:translateX(120%)}}
+.pqdpi{flex:none;width:66px;height:66px;border-radius:19px;display:grid;place-content:center;text-align:center;color:#fff;background:linear-gradient(145deg,#2c55b8,#102250);box-shadow:5px 5px 12px var(--lo),-4px -4px 10px var(--hi),inset 0 1px 0 #ffffff45}
+.pqdpi b{font:800 24px/1 'Bricolage Grotesque',sans-serif}.pqdpi small{font-size:10.5px;letter-spacing:1.6px;color:#c3d3ff;font-weight:700}
+.pqtx{flex:1;min-width:0}.pqtx b{display:block;font:800 17px 'Bricolage Grotesque',sans-serif;color:var(--navy)}.pqtx span{font-size:12.5px;color:var(--muted);line-height:1.3;display:block}
+.pqlock{flex:none;display:flex;align-items:center;gap:5px;padding:7px 11px;border-radius:99px;font-size:11.5px;font-weight:800;letter-spacing:.3px;color:#3b2a00;background:linear-gradient(145deg,var(--gold2),var(--gold));box-shadow:3px 3px 8px var(--lo),-2px -2px 6px var(--hi),inset 0 1px 0 #fff8}
+.pqstats{display:flex;gap:10px;margin:16px 0}
+.pqstat{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:11px 8px;border-radius:15px;background:var(--bg);box-shadow:var(--raise-s);font-size:13.5px;font-weight:700;color:var(--navy)}
+.pqsteps{margin:0 0 20px;padding:14px 16px;list-style:none;border-radius:20px;background:var(--bg);box-shadow:var(--inset);display:grid;gap:11px}
+.pqsteps li{display:flex;align-items:center;gap:12px;font-size:13px;color:var(--muted);line-height:1.3}
+.pqsteps li i{flex:none;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font:800 12px Figtree,sans-serif;font-style:normal;color:var(--navy);background:var(--bg);box-shadow:var(--raise-s)}
+.pqsteps b{color:var(--ink)}
+.pqcard .btn.go{width:100%;padding:16px;font-size:16.5px;border-radius:18px;box-shadow:0 10px 24px #f4b52e66,6px 6px 14px var(--lo),-5px -5px 12px var(--hi),inset 0 1px 0 #fff9}
+.pqcard .btn.go:active{box-shadow:inset 3px 3px 8px #c08a12,inset -3px -3px 8px #ffe48f}
+.pqcard .btn.alt{width:100%;margin-top:12px;padding:14px}
+@media (prefers-reduced-motion:reduce){.pqtile::after{animation:none}}
 #faceNote{margin-top:12px;padding:9px 13px;border-radius:13px;box-shadow:var(--inset);font-weight:600;font-size:13px;color:var(--muted)}
 #faceNote:empty{display:none}
 #faceNote.ok{color:#0b7a5c}#faceNote.bad{color:#b3261e}
@@ -186,7 +210,7 @@ details.card[open]>summary{margin-bottom:14px}
       <div id="adjust" hidden>
         <button class="btn" id="enhance" style="width:100%;margin-bottom:6px">Enhance quality + face</button>
         <p class="tip" style="margin-top:0">Makes a low-quality photo sharper and clearer, fixes light, and brings the face out. Works offline.</p>
-        <label class="f">Zoom the face <input type="range" id="zoom" min="100" max="400" value="100"></label>
+        <label class="f">Zoom the face <input type="range" id="zoom" min="70" max="400" value="100"></label>
         <p class="tip">Drag the photo on the sheet to move it. Every copy follows.</p>
         <div class="sub">Background</div>
         <div class="chips" id="bgs"><button class="chip on" data-bg="orig">Original</button><button class="chip" data-bg="#ffffff"><i class="sw" style="background:#fff"></i>White</button><button class="chip" data-bg="#218df6"><i class="sw" style="background:#218df6"></i>Blue</button><button class="chip" data-bg="#e2e2e2"><i class="sw" style="background:#e2e2e2"></i>Grey</button></div>
@@ -240,17 +264,6 @@ details.card[open]>summary{margin-bottom:14px}
       </details>
     </div>
 
-    <details class="card" id="align">
-      <summary>Printer alignment</summary>
-      <p class="tip" style="margin:0 0 4px">Cut lines a little off? Fix it once. It is remembered for each paper size.</p>
-      <div class="row"><label class="f">Move right (mm)<input type="number" id="dx" step="0.1" min="-150" max="150" value="0"></label><label class="f">Move down (mm)<input type="number" id="dy" step="0.1" min="-150" max="150" value="0"></label></div>
-      <div class="sub">Or fix it automatically</div>
-      <button class="btn alt" id="testPrint" style="width:100%">1. Print test page</button>
-      <p class="tip" style="margin-top:10px">2. Measure the gap from each paper edge to the black frame. If one side is cut off, leave it empty and fill only Left and Top:</p>
-      <div class="row"><label class="f">Left (mm)<input type="number" id="mL" step="0.1" min="0" max="30"></label><label class="f">Right (mm)<input type="number" id="mR" step="0.1" min="0" max="30"></label><label class="f">Top (mm)<input type="number" id="mT" step="0.1" min="0" max="30"></label><label class="f">Bottom (mm)<input type="number" id="mB" step="0.1" min="0" max="30"></label></div>
-      <button class="btn" id="fixAuto" style="width:100%;margin-top:14px">3. Fix automatically</button>
-    </details>
-
     <div class="card act">
       <button class="btn" id="print">Print now</button>
       <button class="btn pdf" id="pdf">Save as PDF</button>
@@ -259,6 +272,22 @@ details.card[open]>summary{margin-bottom:14px}
   </aside>
 </main>
 <div class="busy" id="busy" hidden role="status" aria-live="polite"><div class="bcard"><div class="mini"><i style="--i:0"></i><i style="--i:1"></i><i style="--i:2"></i><i style="--i:3"></i><i style="--i:4"></i><i style="--i:5"></i></div><h3 id="bTitle">Working…</h3><div class="bar"><span id="bar"></span></div><ul class="bsteps" id="bSteps"></ul></div></div>
+<div class="busy" id="pq" hidden role="dialog" aria-modal="true" aria-labelledby="pqT"><div class="pqcard">
+  <div class="pqhead"><span class="pqico">🖨️</span><div><h3 id="pqT">Print photos</h3><p>Prints are always made in High quality.</p></div></div>
+  <div id="pqChips"><div class="pqtile" role="img" aria-label="High quality, 600 DPI, locked">
+    <div class="pqdpi"><b>600</b><small>DPI</small></div>
+    <div class="pqtx"><b>High quality</b><span>Sharpest output for photo prints</span></div>
+    <div class="pqlock">🔒 Locked</div>
+  </div></div>
+  <div class="pqstats" id="pqInfo"></div>
+  <ol class="pqsteps">
+    <li><i>1</i><span>In the next window pick your <b>printer</b></span></li>
+    <li><i>2</i><span>Set its quality to <b>Best / Photo</b></span></li>
+    <li><i>3</i><span>Choose <b>Actual size (100%)</b></span></li>
+  </ol>
+  <button class="btn go" id="pqGo">Continue to printer</button>
+  <button class="btn alt" id="pqCancel">Cancel</button>
+</div></div>
 <div class="toast" id="toast" role="status"></div>
 <div class="gate" id="gate">
   <div class="gcard">
@@ -342,14 +371,25 @@ function plan(){
   return {pw:best.pw,ph:best.ph,cap:best.cap,n,cols:c,rows:r,slots,x0,y0,gw,gh,maxCols:best.cols};
 }
 function photoFor(i,n){const np=s.photos.length;if(!np)return null;const per=Math.max(1,Math.floor(n/np));return s.photos[Math.min(np-1,Math.floor(i/per))];}
-function limits(p){const base=Math.max(s.w/p.img.width,s.h/p.img.height)*p.zoom;return [Math.max(0,(p.img.width*base-s.w)/2),Math.max(0,(p.img.height*base-s.h)/2)];}
-function clamp(p){const [mx,my]=limits(p);p.ox=Math.max(-mx,Math.min(mx,p.ox));p.oy=Math.max(-my,Math.min(my,p.oy));}
+function limits(p){const base=Math.max(s.w/p.img.width,s.h/p.img.height)*p.zoom;return [Math.abs(p.img.width*base-s.w)/2,Math.abs(p.img.height*base-s.h)/2];}
+function clamp(p){const [mx,my]=limits(p);p.ox=Math.max(-mx,Math.min(mx,p.ox));p.oy=Math.max(-my,Math.min(my+.25*s.h,p.oy));}
+/* if the photo is smaller than the slot (zoomed out / head-room), the empty strip repeats the photo's own edge colour */
+function edgeColor(im){const c=document.createElement('canvas');c.width=40;c.height=40;const x=c.getContext('2d');x.drawImage(im,0,0,40,40);
+  const d=x.getImageData(0,0,40,3).data;let r=0,g=0,b=0,n=d.length/4;for(let i=0;i<d.length;i+=4){r+=d[i];g+=d[i+1];b+=d[i+2];}return `rgb(${r/n|0},${g/n|0},${b/n|0})`;}
+function padFill(ctx,ph,sl,ix,iy,dw,dh){
+  const im=ph.img,iw=im.width,ih=im.height;if(ph.fi!==im){ph.fc=edgeColor(im);ph.fi=im;}
+  ctx.fillStyle=ph.fc;ctx.fillRect(sl.x,sl.y,sl.w,sl.h);
+  if(iy>sl.y)ctx.drawImage(im,0,0,iw,1,ix,sl.y,dw,iy-sl.y);
+  if(iy+dh<sl.y+sl.h)ctx.drawImage(im,0,ih-1,iw,1,ix,iy+dh,dw,sl.y+sl.h-iy-dh);
+  if(ix>sl.x)ctx.drawImage(im,0,0,1,ih,sl.x,iy,ix-sl.x,dh);
+  if(ix+dw<sl.x+sl.w)ctx.drawImage(im,iw-1,0,1,ih,ix+dw,iy,sl.x+sl.w-ix-dw,dh);
+}
 
 /* ---------- drawing (units are mm; k = pixels per mm) ---------- */
 function draw(ctx,p,k,preview){
   ctx.setTransform(1,0,0,1,0,0);ctx.imageSmoothingQuality='high';
   ctx.fillStyle='#fff';ctx.fillRect(0,0,ctx.canvas.width,ctx.canvas.height);
-  ctx.setTransform(k,0,0,k,0,0);ctx.translate(s.dx||0,s.dy||0);
+  ctx.setTransform(k,0,0,k,0,0);
   /* vertical card: turn the whole sheet 90° clockwise, so preview and print match */
   if(p.rot){ctx.translate(p.ph,0);ctx.rotate(Math.PI/2);}
   let gd=false;p.slots.forEach((sl,i)=>{
@@ -357,7 +397,9 @@ function draw(ctx,p,k,preview){
     if(ph){
       const base=Math.max(sl.w/ph.img.width,sl.h/ph.img.height)*ph.zoom,dw=ph.img.width*base,dh=ph.img.height*base;
       ctx.save();ctx.beginPath();ctx.rect(sl.x,sl.y,sl.w,sl.h);ctx.clip();
-      ctx.drawImage(ph.img,sl.x+sl.w/2-dw/2+ph.ox,sl.y+sl.h/2-dh/2+ph.oy,dw,dh);ctx.restore();
+      const ix=sl.x+sl.w/2-dw/2+ph.ox,iy=sl.y+sl.h/2-dh/2+ph.oy;
+      if(ix>sl.x+.01||iy>sl.y+.01||ix+dw<sl.x+sl.w-.01||iy+dh<sl.y+sl.h-.01)padFill(ctx,ph,sl,ix,iy,dw,dh);
+      ctx.drawImage(ph.img,ix,iy,dw,dh);ctx.restore();
     }else if(preview){
       ctx.fillStyle='#e6ebf2';ctx.fillRect(sl.x,sl.y,sl.w,sl.h);
       ctx.fillStyle='#c5cfdd';ctx.beginPath();ctx.arc(sl.x+sl.w/2,sl.y+sl.h*.4,sl.w*.17,0,7);ctx.fill();
@@ -469,7 +511,7 @@ cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',up);
 $('zoom').oninput=e=>{const p=s.photos[s.active];if(!p)return;p.zoom=e.target.value/100;clamp(p);render();};
 
 /* ---------- controls ---------- */
-$('paper').onchange=e=>{s.paper=e.target.value;offLoad();render();};
+$('paper').onchange=e=>{s.paper=e.target.value;render();};
 ['cw','ch'].forEach(id=>$(id).oninput=()=>{s.w=Math.max(10,+$('cw').value||35);s.h=Math.max(10,+$('ch').value||45);s.photos.forEach(clamp);render();});
 $('gap').oninput=e=>{s.gap=Math.max(0,+e.target.value||0);render();};
 $('margin').oninput=e=>{s.margin=Math.max(0,+e.target.value||0);render();};
@@ -482,7 +524,7 @@ $('fillBtn').onclick=()=>{s.qty=0;render();};
 $('reset').onclick=()=>{s.photos.forEach(p=>URL.revokeObjectURL(p.url));s.photos=[];s.active=0;s.qty=0;thumbs();render();toast('Ready for a new photo.');};
 
 /* ---------- export at 300 DPI ---------- */
-function hi(){const k=300/25.4,c=document.createElement('canvas');c.width=Math.round(P.ow*k);c.height=Math.round(P.oh*k);draw(c.getContext('2d'),P,k,false);return c;}
+function hi(){const k=(s.q||600)/25.4,c=document.createElement('canvas');c.width=Math.round(P.ow*k);c.height=Math.round(P.oh*k);draw(c.getContext('2d'),P,k,false);return c;}
 function ready(){if(!s.photos.length){toast('Add a photo first.');return false;}if(P.bad||!P.n){toast('Photo does not fit on this paper.');return false;}return true;}
 function pageHTML(img,t){const W=P.ow+'mm',H=P.oh+'mm';return `<!doctype html><html><head><meta charset="utf-8"><title>${t}</title><style>@page{size:${W} ${H};margin:0}*{margin:0;padding:0;box-sizing:border-box}html,body{width:${W};height:${H};overflow:hidden;background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact}img{position:absolute;left:0;top:0;width:${W};height:${H};max-width:none;display:block}</style></head><body><img src="${img}" onload="setTimeout(function(){window.focus();print()},300)"></body></html>`;}
 function scan(){const e=$('sheet');e.classList.remove('scan');void e.offsetWidth;e.classList.add('scan');}
@@ -496,7 +538,7 @@ function busy(title,steps,work){
 }
 function makePdf(canvas){
   const pdf=new jspdf.jsPDF({orientation:P.ow>P.oh?'l':'p',unit:'mm',format:[Math.min(P.ow,P.oh),Math.max(P.ow,P.oh)],compress:true});
-  pdf.addImage(canvas.toDataURL('image/jpeg',.95),'JPEG',0,0,pdf.internal.pageSize.getWidth(),pdf.internal.pageSize.getHeight());
+  pdf.addImage(canvas.toDataURL('image/jpeg',(s.q||600)>=600?.98:.95),'JPEG',0,0,pdf.internal.pageSize.getWidth(),pdf.internal.pageSize.getHeight());
   return pdf;
 }
 /* Print = build a real PDF and open it in the browser's PDF viewer (print from the viewer's print button).
@@ -510,17 +552,30 @@ function openPdfToPrint(w,canvas,name){
 $('pdf').onclick=()=>{
   if(!ready())return;
   if(!window.jspdf){toast('PDF tool did not load. Check internet and retry.');return;}
-  busy('Making your PDF',['Arranging photos','Rendering at 300 DPI','Saving PDF'],()=>{
+  busy('Making your PDF',['Arranging photos','Rendering at '+(s.q||600)+' DPI','Saving PDF'],()=>{
     const pdf=new jspdf.jsPDF({orientation:P.ow>P.oh?'l':'p',unit:'mm',format:[Math.min(P.ow,P.oh),Math.max(P.ow,P.oh)],compress:true});
-    pdf.addImage(hi().toDataURL('image/jpeg',.95),'JPEG',0,0,pdf.internal.pageSize.getWidth(),pdf.internal.pageSize.getHeight());
+    pdf.addImage(hi().toDataURL('image/jpeg',(s.q||600)>=600?.98:.95),'JPEG',0,0,pdf.internal.pageSize.getWidth(),pdf.internal.pageSize.getHeight());
     pdf.save('passport-photos-'+Date.now()+'.pdf');toast('PDF saved. Print it at 100% / Actual size.');
   });
 };
+/* ---------- print: quality dialog, then the browser's printer window ---------- */
+s.q=600; /* High quality is locked */
+function pqShow(){
+  s.q=600;
+  const [,,pn]=PAPERS[s.paper];
+  $('pqInfo').innerHTML='<div class="pqstat">📄 '+pn+'</div><div class="pqstat">🖼️ '+P.n+' photo'+(P.n==1?'':'s')+'</div>';
+}
+$('pqCancel').onclick=()=>{$('pq').hidden=true;};
+$('pq').addEventListener('click',e=>{if(e.target===$('pq'))$('pq').hidden=true;});
 $('print').onclick=()=>{
   if(!ready())return;
   if(!window.jspdf){toast('PDF tool did not load. Check internet and retry.');return;}
+  pqShow();$('pq').hidden=false;
+};
+$('pqGo').onclick=()=>{
+  $('pq').hidden=true;
   const w=window.open('','_blank');
-  busy('Getting ready to print',['Arranging photos','Rendering at 300 DPI','Opening PDF'],()=>{
+  busy('Getting ready to print',['Arranging photos','Rendering at '+s.q+' DPI','Opening PDF'],()=>{
     openPdfToPrint(w,hi(),'passport-photos');
   });
 };
@@ -534,15 +589,16 @@ async function detect(p){
   c.width=Math.round(o.width*m);c.height=Math.round(o.height*m);c.getContext('2d').drawImage(o,0,0,c.width,c.height);
   const L=(fl.detect(c).faceLandmarks||[])[0];if(!L)return null;
   const ch=L[152].y,top=L[10].y;
-  return{cx:(L[234].x+L[454].x)/2,ch,cr:ch-(ch-top)*1.3};
+  return{cx:(L[234].x+L[454].x)/2,ch,cr:ch-(ch-top)*1.6};
 }
-const spec=()=>Math.abs(s.w-s.h)<2?{t:.5,lo:.42,hi:.6}:{t:.58,lo:.5,hi:.68};
+/* t = head height / photo height, top = head-room above the head. Leaves the chest and shoulders visible. */
+const spec=()=>Math.abs(s.w-s.h)<2?{t:.5,lo:.4,hi:.62,top:.11}:{t:.56,lo:.46,hi:.68,top:.08};
 function geo(p){const f=p.face,iw=p.img.width,ih=p.img.height,sc=Math.max(s.w/iw,s.h/ih)*p.zoom;
   return{sc,iw,ih,cx:s.w/2+p.ox+(f.cx-.5)*iw*sc,cr:s.h/2+p.oy+(f.cr-.5)*ih*sc,ch:s.h/2+p.oy+(f.ch-.5)*ih*sc};}
 function fit(p){
   const f=p.face,iw=p.img.width,ih=p.img.height,sp=spec(),b=Math.max(s.w/iw,s.h/ih);
-  p.zoom=Math.max(1,Math.min(2.5,sp.t*s.h/((f.ch-f.cr)*ih)/b));
-  const sc=b*p.zoom;p.ox=-(f.cx-.5)*iw*sc;p.oy=(1-sp.t)*.4*s.h-s.h/2-(f.cr-.5)*ih*sc;clamp(p);
+  p.zoom=Math.max(.75,Math.min(2.5,sp.t*s.h/((f.ch-f.cr)*ih)/b));
+  const sc=b*p.zoom;p.ox=-(f.cx-.5)*iw*sc;p.oy=sp.top*s.h-s.h/2-(f.cr-.5)*ih*sc;clamp(p);
 }
 function fstate(p){
   const g=geo(p),sp=spec(),hf=(g.ch-g.cr)/s.h;
@@ -554,7 +610,7 @@ function fstate(p){
   return{ok:1,msg:'Face size and position look right'};
 }
 function guide(c,sl,p){
-  const g=fstate(p),sp=spec(),hh=sp.t*s.h,tm=(1-sp.t)*.4*s.h;c.save();
+  const g=fstate(p),sp=spec(),hh=sp.t*s.h,tm=sp.top*s.h;c.save();
   c.strokeStyle=g.ok?'#19c37d':'#ff5a5a';c.lineWidth=.7;c.strokeRect(sl.x+.35,sl.y+.35,sl.w-.7,sl.h-.7);
   c.setLineDash([1.6,1.1]);c.strokeStyle='#ffffffdd';c.lineWidth=.35;c.beginPath();c.ellipse(sl.x+sl.w/2,sl.y+tm+hh/2,hh*.36,hh/2,0,0,7);c.stroke();c.restore();
 }
@@ -725,42 +781,6 @@ async function applyBg(){
 }
 $('bgs').onclick=e=>{const b=e.target.closest('.chip');if(!b)return;if(!s.photos.length){toast('Add a photo first.');return;}s.bg=b.dataset.bg;bgChips();applyBg();};
 
-/* ---------- printer alignment ---------- */
-const OFK='ppp_off';
-function offLoad(){let m={};try{m=JSON.parse(localStorage.getItem(OFK)||'{}')[s.paper]||{};}catch(e){}s.dx=m.dx||0;s.dy=m.dy||0;$('dx').value=s.dx;$('dy').value=s.dy;}
-function offSave(){try{const m=JSON.parse(localStorage.getItem(OFK)||'{}');m[s.paper]={dx:s.dx,dy:s.dy};localStorage.setItem(OFK,JSON.stringify(m));}catch(e){}}
-['dx','dy'].forEach(id=>$(id).oninput=()=>{s.dx=+$('dx').value||0;s.dy=+$('dy').value||0;offSave();render();});
-function testPage(){
-  const k=300/25.4,c=document.createElement('canvas'),W=P.ow,H=P.oh;c.width=Math.round(W*k);c.height=Math.round(H*k);
-  const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.setTransform(k,0,0,k,0,0);
-  x.strokeStyle='#000';x.lineWidth=.35;x.strokeRect(5,5,W-10,H-10);x.lineWidth=.2;x.beginPath();
-  x.moveTo(W/2-6,H/2);x.lineTo(W/2+6,H/2);x.moveTo(W/2,H/2-6);x.lineTo(W/2,H/2+6);x.stroke();
-  x.fillStyle='#000';x.font='3px sans-serif';x.textAlign='center';
-  x.fillText('TEST PAGE · print at Actual size',W/2,H/2-10);x.fillText('Frame should be 5 mm from every edge',W/2,H/2+12);
-  x.font='2.2px sans-serif';x.lineWidth=.15;x.textAlign='left';x.beginPath();
-  for(let m=10;m<H-5;m+=10){x.moveTo(5,m);x.lineTo(m%50?9:13,m);x.fillText(m,14,m+.8);}
-  x.textAlign='center';for(let m=10;m<W-5;m+=10){x.moveTo(m,5);x.lineTo(m,m%50?9:13);x.fillText(m,m,16);}
-  x.stroke();x.textAlign='center';x.font='bold 3.4px sans-serif';x.fillText('TOP ▲ (numbers = mm from sheet top)',W/2,24);
-  return c;
-}
-$('testPrint').onclick=()=>{
-  if(P.bad){toast('Pick a paper that fits first.');return;}
-  if(!window.jspdf){toast('PDF tool did not load. Check internet and retry.');return;}
-  const w=window.open('','_blank');
-  busy('Preparing test page',['Drawing test frame','Rendering at 300 DPI','Opening PDF'],()=>{
-    openPdfToPrint(w,testPage(),'printer-test');
-  });
-};
-$('fixAuto').onclick=()=>{
-  const g=id=>{const v=parseFloat($(id).value);return isNaN(v)?null:v;},L=g('mL'),R=g('mR'),T=g('mT'),B=g('mB');
-  const cl=n=>Math.max(-150,Math.min(150,Math.round(n*10)/10));
-  if(L===null&&R===null&&T===null&&B===null){toast('Type at least the Left and Top gaps first.');return;}
-  if(L!==null&&R!==null)s.dx=cl((R-L)/2);else if(L!==null)s.dx=cl(5-L);else if(R!==null)s.dx=cl(R-5);
-  if(T!==null&&B!==null)s.dy=cl((B-T)/2);else if(T!==null)s.dy=cl(5-T);else if(B!==null)s.dy=cl(B-5);
-  $('dx').value=s.dx;$('dy').value=s.dy;offSave();render();
-  toast(`Fixed. Moved ${s.dx} mm across and ${s.dy} mm down. Print the test page again to check.`);
-};
-offLoad();
 
 setTimeout(warm,1200);
 thumbs();sizeChips();render();
