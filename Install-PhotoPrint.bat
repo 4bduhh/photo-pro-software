@@ -21,6 +21,11 @@ if not defined BROWSER (
   exit /b 1
 )
 
+for /f "usebackq delims=" %%D in (`powershell -NoProfile -Command "[Environment]::GetFolderPath('MyDocuments')"`) do set "DOCS=%%D"
+if not defined DOCS set "DOCS=%USERPROFILE%\Documents"
+set "DATADIR=%DOCS%\PhotoPrint-Data"
+if not exist "%DATADIR%" mkdir "%DATADIR%"
+
 set "PROFILE=C:\PhotoPrintPro"
 if not exist "%PROFILE%" mkdir "%PROFILE%"
 
@@ -43,6 +48,11 @@ if errorlevel 1 (
 
 echo.
 echo  Done! "PhotoPrint Pro" icon is now on your Desktop.
+echo.
+echo  Data folder created: %DATADIR%
+echo.
+echo  FIRST TIME ONLY: open the app, click "E-Stamp". A folder window opens.
+echo   Choose the "PhotoPrint-Data" folder, click "Select Folder", then "Allow".
 echo.
 echo  IMPORTANT (one time):
 echo   Windows Settings ^> Printers ^& scanners ^> choose your photo printer

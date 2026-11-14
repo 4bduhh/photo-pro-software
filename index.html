@@ -223,6 +223,8 @@ details.card[open]>summary{margin-bottom:14px}
 .eshh{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:20px 0 4px}
 .eshh b{font:800 18px 'Bricolage Grotesque',sans-serif}
 .eshh span{font-size:12.5px;font-weight:800;padding:6px 14px;border-radius:99px;color:#256b86;background:#fff;box-shadow:0 0 0 1px var(--line)}
+#esFolder.on{color:#0b7a4f;background:#e6f8ee;box-shadow:0 0 0 1px #a9e3c5,0 6px 14px rgba(30,170,100,.12)}
+#esFolder.ask{color:#a0600f;background:#fff4de;box-shadow:0 0 0 1px #f0d29a}
 /* folder cards */
 .esk{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;padding-top:30px}
 .fd{--b1:#ece8fb;--b2:#dcd5f6;--ic:#4b3fa8;--val:#2e2570;--sub:#5b4fb0;--nub:#9486e0;--orb:rgba(255,255,255,.5);position:relative;filter:drop-shadow(0 14px 16px rgba(40,90,100,.13));animation:rise .55s cubic-bezier(.2,.8,.2,1) both;transition:transform .25s}
@@ -470,6 +472,7 @@ tr.esd.cl .esdc{transform:rotate(-90deg)}
   <div class="eshd">
     <div class="esttl"><span class="esti" data-ic="stamp" data-s="26"></span><div><h2 id="esT">E-Stamp Register</h2><p>Daily stamp sales, profit and customer ledger</p></div></div>
     <div class="esha">
+      <button class="esb alt sm" id="esFolder" type="button" hidden><span data-ic="folder" data-s="16"></span><span class="lb">Data folder</span></button>
       <button class="esb alt sm" id="esImp" type="button"><span data-ic="up" data-s="16"></span><span class="lb">Import</span></button>
       <button class="esb alt sm" id="esCp" type="button"><span data-ic="copy" data-s="16"></span><span class="lb">Copy</span></button>
       <button class="esb alt sm" id="esCsv" type="button"><span data-ic="down" data-s="16"></span><span class="lb">CSV</span></button>
@@ -1201,7 +1204,8 @@ const PATH={
  down:'<path d="M12 4v11M7 11l5 5 5-5"/><path d="M5 20h14"/>',
  up:'<path d="M12 16V5M7 9l5-5 5 5"/><path d="M5 20h14"/>',
  chev:'<path d="M6 9l6 6 6-6"/>',
- layers:'<path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/>'
+ layers:'<path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/>',
+folder:'<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>'
 };
 const ic=(n,s)=>'<svg width="'+(s||18)+'" height="'+(s||18)+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+PATH[n]+'</svg>';
 document.querySelectorAll('[data-ic]').forEach(el=>{el.innerHTML=ic(el.dataset.ic,+el.dataset.s||18);});
@@ -1211,8 +1215,36 @@ const KEY=()=>{try{const s=JSON.parse(localStorage.getItem('ppp_session')||'null
 const FIELDS=['date','serial','phone','amount','profit','margin','note'],LET='ABCDEFG';
 let D=[],editId=null,range='all',sortK='date',sortD=-1,group=true,metric='profit',sel=new Set(),cur=null,VIS=[],SHOWN=0,collapsed=new Set(),touched=false,trendKey='';
 let margin=10;try{margin=parseFloat(localStorage.getItem('ppp_estamp_margin'))||10;}catch(e){}
+/* ---- E-Stamp data folder: keeps a real file on the shop PC (File System Access API, Chrome/Edge) ---- */
+const FSOK=typeof window.showDirectoryPicker==='function';
+const idb=(mode,fn)=>new Promise((res,rej)=>{const r=indexedDB.open('ppp_fs',1);r.onupgradeneeded=()=>r.result.createObjectStore('h');r.onerror=()=>rej(r.error);r.onsuccess=()=>{const db=r.result,tx=db.transaction('h',mode),q=fn(tx.objectStore('h'));tx.oncomplete=()=>{db.close();res(q&&q.result);};tx.onerror=()=>{db.close();rej(tx.error);};};});
+let DH=null,fsState='off',wT=0,wBusy=false,wAgain=false;
+const fsName=()=>'estamp-data-'+String(wa).replace(/[^\w.-]/g,'_')+'.json';
+const tsKey=()=>KEY()+'_ts';
+function fsPaint(){const b=$('esFolder');if(!b)return;b.hidden=!FSOK;b.classList.toggle('on',fsState==='ok');b.classList.toggle('ask',fsState==='ask');
+  const l=b.querySelector('.lb');l.textContent=fsState==='ok'?'Saving to folder':fsState==='ask'?'Allow folder':'Data folder';
+  b.title=fsState==='ok'?'Your register is saved in the folder "'+(DH&&DH.name)+'". Click to change.':fsState==='ask'?'Click to allow access to your data folder again':'Choose a folder on this computer to keep your E-Stamp data';}
+async function fsPerm(req){if(!DH)return false;const o={mode:'readwrite'};try{let p=await DH.queryPermission(o);if(p==='granted')return true;if(req){p=await DH.requestPermission(o);return p==='granted';}}catch(e){}return false;}
+async function fsRead(){try{const fh=await DH.getFileHandle(fsName());const j=JSON.parse(await(await fh.getFile()).text());return j&&Array.isArray(j.entries)?j:null;}catch(e){return null;}}
+async function fsFlush(){if(!DH||fsState!=='ok')return;if(wBusy){wAgain=true;return;}wBusy=true;
+  try{const fh=await DH.getFileHandle(fsName(),{create:true}),w=await fh.createWritable();
+    await w.write(JSON.stringify({app:'PhotoPrint Pro',type:'estamp',store:wa,updated:+localStorage.getItem(tsKey())||Date.now(),entries:D},null,1));await w.close();}
+  catch(e){fsState='ask';fsPaint();}
+  wBusy=false;if(wAgain){wAgain=false;fsFlush();}}
+function fsSave(){if(!DH||fsState!=='ok')return;clearTimeout(wT);wT=setTimeout(fsFlush,350);}
+async function fsSync(req){if(!DH)return;
+  if(!(await fsPerm(req))){fsState='ask';fsPaint();return;}
+  fsState='ok';fsPaint();
+  const j=await fsRead(),lt=+localStorage.getItem(tsKey())||0;
+  if(j&&j.entries.length){
+    if(!D.length||(j.updated||0)>lt){
+      if(lt===0&&D.length){const have=new Set(D.map(x=>x.id));j.entries.forEach(x=>{if(!have.has(x.id))D.push(x);});}else D=j.entries;
+      try{localStorage.setItem(KEY(),JSON.stringify(D));localStorage.setItem(tsKey(),String(Math.max(j.updated||0,lt)||Date.now()));}catch(e){}
+      render();snack('Loaded '+D.length+' entries from your data folder');fsFlush();return;}}
+  if(!j||lt>(j.updated||0))fsFlush();}
+const fsReady=FSOK?idb('readonly',st=>st.get('dir')).then(async h=>{if(h){DH=h;fsState=(await fsPerm(false))?'ok':'ask';}fsPaint();}).catch(()=>fsPaint()):Promise.resolve();
 const load=()=>{try{D=JSON.parse(localStorage.getItem(KEY())||'[]')||[];}catch(e){D=[];}};
-const store=()=>{try{localStorage.setItem(KEY(),JSON.stringify(D));return true;}catch(e){snack('Could not save. Browser storage is full or blocked.',null,null,true);return false;}};
+const store=()=>{try{localStorage.setItem(KEY(),JSON.stringify(D));localStorage.setItem(tsKey(),String(Date.now()));fsSave();return true;}catch(e){fsSave();snack('Could not save. Browser storage is full or blocked.',null,null,true);return false;}};
 const pad=n=>String(n).padStart(2,'0');
 const iso=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
 const today=()=>iso(new Date());
@@ -1338,7 +1370,7 @@ function openForm(x,rep){reset();$('esDate').value=today();
     prev();}
   $('esM').hidden=false;setTimeout(()=>$(x&&rep?'esSerial':x?'esAmt':'esSerial').focus(),60);}
 function closeForm(){$('esM').hidden=true;}
-function open(){load();$('es').hidden=false;document.body.style.overflow='hidden';sel.clear();cur=null;render();}
+function open(){load();$('es').hidden=false;document.body.style.overflow='hidden';sel.clear();cur=null;render();fsPaint();fsReady.then(()=>fsSync(true)).then(()=>{if(FSOK&&!DH&&!localStorage.getItem('ppp_fs_asked')){try{localStorage.setItem('ppp_fs_asked','1');}catch(e){}fsPick(true);}});}
 function close(){closeForm();$('es').hidden=true;document.body.style.overflow='';}
 $('esBtn').onclick=open;$('esClose').onclick=close;$('esAdd').onclick=()=>openForm();$('esCancel').onclick=closeForm;
 $('esM').addEventListener('mousedown',e=>{if(e.target===$('esM'))closeForm();});
@@ -1420,6 +1452,16 @@ function importCsv(t){let add=0,skip=0;
     if(serial.length<3||phone.length!==10||isNaN(amount)||amount<0||D.some(x=>x.serial===serial)){skip++;return;}
     D.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),serial,phone,amount,profit,date,note:(r[5]||'').trim().slice(0,80),ts:Date.now()+add});add++;});
   if(add)store();render();snack(add+(add===1?' entry':' entries')+' imported'+(skip?', '+skip+' skipped':''),null,null,!add);}
+async function fsPick(auto){
+  try{const h=await window.showDirectoryPicker({id:'pppdata',mode:'readwrite',startIn:'documents'});
+    DH=h;await idb('readwrite',st=>st.put(h,'dir'));fsState='ok';fsPaint();await fsSync(false);snack('Data folder set: '+h.name);}
+  catch(e){if(auto)return;if(!e||e.name!=='AbortError')snack('Could not use that folder. Choose the PhotoPrint-Data folder inside Documents.',null,null,true);}
+}
+$('esFolder').onclick=async()=>{
+  if(DH&&fsState==='ask'){await fsSync(true);if(fsState==='ok'){snack('Folder access allowed');return;}}
+  if(DH&&fsState==='ok'&&!confirm('Your data is saved in the folder "'+DH.name+'". Choose a different folder?'))return;
+  fsPick(false);
+};
 $('esImp').onclick=()=>$('esFile').click();
 $('esFile').onchange=()=>{const f=$('esFile').files[0];$('esFile').value='';if(!f)return;const r=new FileReader();r.onload=()=>importCsv(String(r.result||''));r.readAsText(f);};
 /* keyboard */
