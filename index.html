@@ -1439,7 +1439,7 @@ function openForm(x,rep){reset();$('esDate').value=today();
     prev();}
   $('esM').hidden=false;setTimeout(()=>$(x&&rep?'esSerial':x?'esAmt':'esSerial').focus(),60);}
 function closeForm(){$('esM').hidden=true;}
-function open(){if(P().feat&&P().feat.estamp===false){esLocked();return;}load();cloudChip('','');$('es').hidden=false;document.body.style.overflow='hidden';sel.clear();cur=null;render();fsPaint();fsReady.then(()=>fsSync(true)).then(()=>{cloudChip(cloudOn()?'wait':'off',cloudOn()?'Syncing…':'');return cloudSync();}).then(()=>{});}
+function open(){if(P().feat&&P().feat.estamp===false){esLocked();return;}load();cloudChip('','');$('es').hidden=false;document.body.style.overflow='hidden';sel.clear();cur=null;render();fsPaint();fsReady.then(()=>fsSync(false)).then(()=>{cloudChip(cloudOn()?'wait':'off',cloudOn()?'Syncing…':'');return cloudSync();}).then(()=>{});}
 function close(){closeForm();$('es').hidden=true;document.body.style.overflow='';}
 $('esBtn').onclick=open;$('esClose').onclick=close;$('esAdd').onclick=()=>openForm();$('esCancel').onclick=closeForm;
 $('esM').addEventListener('mousedown',e=>{if(e.target===$('esM'))closeForm();});
