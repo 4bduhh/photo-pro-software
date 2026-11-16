@@ -1,0 +1,659 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PhotoPrint Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#10213f;--navy:#14295a;--gold:#f4b52e;--bg:#eef1ee;--card:#fff;--line:#dde2de;--muted:#5f6b7a;--ok:#177a4c;--okb:#dff4e8;--warn:#8a5a00;--warnb:#fff3d6;--bad:#9b1c1c;--badb:#fde8e8;--grey:#4b5563;--greyb:#e8ebef;--r:14px}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:14.5px/1.45 Figtree,system-ui,sans-serif}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+[hidden]{display:none!important}
+h1,h2,h3{font-family:'Bricolage Grotesque',sans-serif;margin:0}
+.top{background:var(--navy);color:#fff;display:flex;align-items:center;gap:10px;padding:12px clamp(14px,3vw,32px);position:sticky;top:0;z-index:20}
+.brand{display:flex;align-items:center;gap:10px;font:800 19px 'Bricolage Grotesque',sans-serif;margin-right:auto}
+.logo{width:32px;height:32px;border-radius:9px;background:#0d1d42;display:grid;place-items:center;color:var(--gold)}
+.badge{font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:99px;background:#ffffff22}
+.badge.demo{background:var(--gold);color:var(--ink)}
+.tb{background:#ffffff1a;border:0;color:#fff;border-radius:9px;padding:8px 12px;font-weight:600}
+.tb:hover{background:#ffffff33}
+.wrap{padding:18px clamp(14px,3vw,32px) 60px;max-width:1500px;margin:0 auto}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.st{background:var(--card);border:1.5px solid var(--line);border-radius:var(--r);padding:12px 14px;text-align:left;transition:.12s}
+.st:hover{border-color:var(--navy)}
+.st.on{border-color:var(--navy);box-shadow:0 0 0 2px var(--gold)}
+.st b{display:block;font:800 28px 'Bricolage Grotesque',sans-serif;line-height:1.1}
+.st span{font-size:12.5px;color:var(--muted);font-weight:600}
+.st.g b{color:var(--ok)}.st.w b{color:var(--warn)}.st.r b{color:var(--bad)}
+.bar{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0 10px;align-items:center}
+.bar input[type=search]{flex:1;min-width:200px;height:42px;border:1.5px solid #cdd4dc;border-radius:11px;padding:0 12px;background:#fff}
+select,input[type=text],input[type=date],input[type=number],input[type=email],input[type=password],input[type=tel],textarea{border:1.5px solid #cdd4dc;border-radius:10px;padding:9px 11px;background:#fff;width:100%}
+.bar select{width:auto;height:42px;padding:0 10px}
+.btn{border:0;border-radius:10px;padding:10px 15px;font-weight:700;background:var(--gold);color:var(--ink);text-decoration:none;display:inline-block}
+.btn:hover{filter:brightness(1.05)}
+.btn.o{background:#fff;border:1.5px solid var(--navy);color:var(--navy)}
+.btn.d{background:var(--badb);color:var(--bad);border:1.5px solid #f3b4b4}
+.btn.wa{background:#25d366;color:#053b1b}
+.btn.s{padding:6px 10px;font-size:13px;border-radius:8px}
+.btn:disabled{opacity:.5;cursor:default}
+.sel{display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:var(--navy);color:#fff;border-radius:12px;padding:9px 14px;margin-bottom:10px}
+.sel .btn{padding:6px 11px;font-size:13px}
+.tw{background:var(--card);border:1px solid var(--line);border-radius:var(--r);overflow:auto}
+table{border-collapse:collapse;width:100%;min-width:1060px}
+th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font-size:12px;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);background:#f7f9f7;position:sticky;top:0}
+tr:last-child td{border-bottom:0}
+tbody tr:hover{background:#f7faf7}
+td .nm{font-weight:700;cursor:pointer}
+td .nm:hover{text-decoration:underline}
+td small{color:var(--muted);display:block}
+.pill{display:inline-block;border-radius:99px;padding:3px 10px;font-size:12px;font-weight:700}
+.p-active{background:var(--okb);color:var(--ok)}.p-expiring{background:var(--warnb);color:var(--warn)}.p-expired{background:var(--badb);color:var(--bad)}.p-blocked{background:var(--greyb);color:var(--grey)}
+.req{background:#e6ecff;color:#1d3f9e}
+.acts{display:flex;gap:6px}
+.empty{padding:40px;text-align:center;color:var(--muted)}
+.ov{position:fixed;inset:0;background:#0a1630aa;z-index:40;display:flex;justify-content:flex-end}
+.ov.c{justify-content:center;align-items:center;padding:16px}
+.dr{width:min(520px,100%);height:100%;background:#fff;overflow:auto;padding:20px}
+.md{width:min(560px,100%);max-height:94vh;overflow:auto;background:#fff;border-radius:16px;padding:20px}
+.hd{display:flex;align-items:flex-start;gap:10px;margin-bottom:14px}
+.hd h2{flex:1;font-size:21px}
+.x{background:none;border:0;font-size:26px;line-height:1;color:var(--muted)}
+.sec{border-top:1px solid var(--line);margin-top:16px;padding-top:14px}
+.sec h3{font-size:15px;margin-bottom:10px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+label.f{display:block;font-size:12px;font-weight:600;color:var(--muted)}
+label.f>input,label.f>select,label.f>textarea{margin-top:4px;color:var(--ink);font-weight:500}
+.chips{display:flex;flex-wrap:wrap;gap:7px}
+.chip{border:1.5px solid #cdd4dc;background:#fff;border-radius:99px;padding:6px 12px;font-weight:700;font-size:13px}
+.chip:hover{border-color:var(--navy)}
+.hint{font-size:12.5px;color:var(--muted);margin:6px 0 0}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;font-size:13.5px}
+.kv span{color:var(--muted)}
+.rd{display:flex;gap:14px;flex-wrap:wrap;margin-top:6px;font-size:13.5px;font-weight:500}
+.rd label{display:flex;gap:6px;align-items:center}
+.chip.on{background:var(--navy);border-color:var(--navy);color:#fff}
+.g3{display:grid;grid-template-columns:1fr 1.3fr 1.2fr;gap:8px;margin-top:6px}
+details.dt{margin-top:14px}
+details.dt summary{cursor:pointer;font-weight:700;color:var(--navy)}
+.big{background:#f3f6f3;border:1.5px solid var(--line);border-radius:14px;text-align:center;padding:16px;margin:8px 0 12px}
+.big b{display:block;font:800 30px 'Bricolage Grotesque',sans-serif}
+.big span{font-size:13px;color:var(--muted);font-weight:600}
+.prow{display:grid;grid-template-columns:auto 1.5fr .7fr 1fr .9fr auto;gap:6px;margin-bottom:6px;align-items:center}
+.prow input,.prow select{padding:8px 8px}
+.log{max-height:230px;overflow:auto;font-size:13px}
+.log div{display:flex;gap:10px;padding:5px 0;border-bottom:1px dashed var(--line)}
+.log time{color:var(--muted);min-width:118px}
+.login{min-height:100vh;display:grid;place-items:center;padding:18px}
+.lc{width:min(400px,100%);background:#fff;border-radius:18px;padding:26px;box-shadow:0 18px 50px #0002}
+.err{background:var(--badb);border:1px solid #f3b4b4;color:var(--bad);border-radius:10px;padding:8px 11px;font-weight:600;margin-top:12px;font-size:13px}
+.toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,20px);background:var(--ink);color:#fff;padding:11px 18px;border-radius:10px;opacity:0;pointer-events:none;transition:.25s;z-index:99;font-weight:600}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.revs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:10px}
+.rv{background:var(--navy);color:#fff;border:0;border-radius:var(--r);padding:12px 16px;text-align:left}
+.rv b{display:block;font:800 26px 'Bricolage Grotesque',sans-serif;color:var(--gold)}.rv span{font-size:12.5px;opacity:.85}
+.pc small{display:block;font-weight:500;opacity:.7;font-size:11px}
+.chip.on,.pc.on,.mc.on,.pm.on,.cr.on{background:var(--navy);border-color:var(--navy);color:#fff}
+.pl{display:flex;gap:10px;align-items:baseline;padding:5px 0;border-bottom:1px dashed var(--line);font-size:13px}.pl small{color:var(--muted)}
+.tag{background:#fff3d6;color:#8a5a00}
+.p-update{background:#ffe3cc;color:#b24a00}
+.tabs{display:flex;gap:6px;margin:0 0 16px;border-bottom:2px solid var(--line)}
+.tabs button{background:none;border:0;padding:11px 18px;font:700 15px 'Bricolage Grotesque',sans-serif;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px}
+.tabs button.on{color:var(--navy);border-bottom-color:var(--gold)}
+.ft{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px dashed var(--line)}
+.ft b{display:block;font-size:14px}.ft small{color:var(--muted);font-size:12px}
+.seg{display:inline-flex;border:1.5px solid var(--line);border-radius:10px;overflow:hidden;flex:none}
+.seg button{border:0;background:#fff;padding:8px 12px;font-weight:700;font-size:13px;cursor:pointer;color:var(--muted)}
+.seg button.on{background:var(--navy);color:#fff}.seg button.on.no{background:var(--bad)}.seg button.on.yes{background:var(--ok)}
+.qx{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;align-items:center}.qx span{font-size:13px;color:var(--muted);font-weight:600}
+.num{text-align:right;font-variant-numeric:tabular-nums}
+.p-on{background:var(--okb);color:var(--ok)}.p-off{background:var(--badb);color:var(--bad)}
+@media(max-width:600px){.g2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div class="login" id="loginView" hidden>
+  <form class="lc" id="loginForm">
+    <h1 style="font-size:26px">PhotoPrint Admin</h1>
+    <p style="color:var(--muted);margin:6px 0 0" id="loginSub">Sign in to manage your stores.</p>
+    <div id="cloudFields">
+      <label class="f" style="margin-top:16px">Admin email<input type="email" id="aEmail" autocomplete="username" required></label>
+      <label class="f" style="margin-top:12px">Password<input type="password" id="aPass" autocomplete="current-password" required></label>
+    </div>
+    <div class="err" id="loginErr" hidden></div>
+    <button class="btn" style="width:100%;margin-top:18px;padding:13px" id="loginBtn" type="submit">Sign in</button>
+  </form>
+</div>
+
+<div id="appView" hidden>
+  <header class="top">
+    <div class="brand"><span class="logo">▣</span>PhotoPrint Admin <span class="badge" id="modeBadge"></span></div>
+    <button class="tb" id="btnRefresh">⟳ Refresh</button>
+    <button class="tb" id="btnSettings">⚙ Settings</button>
+    <button class="tb" id="btnOut">Log out</button>
+  </header>
+  <div class="wrap">
+    <nav class="tabs" id="tabs"><button class="on" data-tab="stores">🏪 Stores &amp; Access</button><button data-tab="estamp">🧾 E-Stamp Data</button></nav>
+    <section id="vStores">
+    <div class="revs" id="rev"></div><div class="stats" id="stats"></div>
+    <div class="bar">
+      <input type="search" id="q" placeholder="Search store name, WhatsApp or notes">
+      <select id="sort">
+        <option value="new">Newest first</option>
+        <option value="exp">Expiring soonest</option>
+        <option value="name">Name A–Z</option>
+        <option value="login">Last login</option>
+        <option value="count">Most logins</option>
+      </select>
+      <select id="planF" aria-label="Filter by plan"><option value="">All plans</option></select>
+      <button class="btn o" id="btnCsv">⬇ Export CSV</button>
+      <button class="btn" id="btnAdd">+ Add store</button>
+    </div>
+    <div class="sel" id="selBar" hidden></div>
+    <div class="tw"><table>
+      <thead><tr><th><input type="checkbox" id="chkAll" aria-label="Select all"></th><th>Store</th><th>WhatsApp</th><th>Plan</th><th>Joined</th><th>Last login</th><th>Logins</th><th>Access ends</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table><div class="empty" id="empty" hidden></div></div>
+    </section>
+    <section id="vEs" hidden>
+      <div class="revs" id="esKpi"></div>
+      <div class="bar"><input type="search" id="esQ" placeholder="Search store name or WhatsApp"><select id="esF"><option value="">All stores</option><option value="on">E-Stamp allowed</option><option value="off">E-Stamp locked</option><option value="data">Has data</option></select><button class="btn o" id="esCsvAll">⬇ Export summary</button></div>
+      <div class="tw"><table><thead><tr><th>Store</th><th>E-Stamp access</th><th class="num">Entries</th><th class="num">Sales</th><th class="num">Profit</th><th>Last entry</th><th>Last sync</th><th>Actions</th></tr></thead><tbody id="esRows"></tbody></table><div class="empty" id="esEmpty" hidden></div></div>
+    </section>
+  </div>
+</div>
+<div id="layer"></div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+/* ===== CONFIG: use the SAME two values as in index.html. Leave empty for local demo mode. ===== */
+const CFG={SUPABASE_URL:'https://nxrrkmtzfntqvivvdbjb.supabase.co',SUPABASE_KEY:'sb_publishable_GE7trTVfwU2xTzAoTEGjOA_Wd5YQ_Kg',DEFAULT_CONTACT:'918124275007',DEFAULT_TRIAL:50,PAID_VER:1};  /* PAID_VER: bump to 2, 3... when you release a PAID update. Keep same as PAID_VER in new.html */
+
+(()=>{
+const $=id=>document.getElementById(id),DAY=864e5,DK='ppp_demo_db',AK='ppp_admin_auth';
+const cloud=!!(CFG.SUPABASE_URL&&CFG.SUPABASE_KEY),BASE=(CFG.SUPABASE_URL||'').replace(/\/$/,'');
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const norm=v=>{let n=String(v||'').replace(/\D/g,'');if(n.length===10)n='91'+n;return n;};
+const pretty=n=>/^91\d{10}$/.test(n)?'+91 '+n.slice(2,7)+' '+n.slice(7):'+'+n;
+const fd=i=>i?new Date(i).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}):'–';
+const fdt=i=>i?new Date(i).toLocaleString('en-IN',{day:'numeric',month:'short',hour:'numeric',minute:'2-digit'}):'–';
+const life=i=>new Date(i).getFullYear()>=2090;
+const dl=s=>Math.ceil((new Date(s.expires_at).getTime()-Date.now())/DAY);
+const verOf=s=>{if(!life(s.expires_at))return null;const m=/^lifetime(?:\s*v(\d+))?$/i.exec(String(s.plan||'').trim());return m&&m[1]?+m[1]:1;};
+function stateOf(s){if(s.status==='blocked')return 'blocked';if(new Date(s.expires_at)<new Date())return 'expired';if(life(s.expires_at)&&verOf(s)<CFG.PAID_VER)return 'update';if(!life(s.expires_at)&&dl(s)<=7)return 'expiring';return 'active';}
+const LBL={active:'Active',expiring:'Expiring soon',expired:'Expired',blocked:'Blocked',update:'Update due'};
+function toast(m,u){const t=$('toast');t.textContent=m;if(u){const b=document.createElement('button');b.textContent='Undo';b.setAttribute('data-undo','');b.style.cssText='margin-left:12px;background:var(--gold);border:0;border-radius:7px;padding:4px 10px;font-weight:700';t.append(b);}t.style.pointerEvents=u?'auto':'none';t.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('show'),u?9000:2800);}
+
+const DEF_T={
+  welcome:"Hello {store}! 👋 Welcome to PhotoPrint Pro. Your access is active until {date} ({days} days). If you need any help, just message me here.",
+  reminder:"Hello {store}, your PhotoPrint Pro access ends on {date} ({days} days left). Reply here to renew so you can keep printing without a break.",
+  expired:"Hello {store}, your PhotoPrint Pro access ended on {date}. Reply here to renew and I'll reactivate it right away.",
+  renewed:"Thank you {store}! ✅ Your PhotoPrint Pro lifetime access is active (version {ver}). Enjoy!",update:"Hello {store}, a new PhotoPrint Pro update (v{ver}) is ready. To keep using it, please pay the one-time update fee of ₹{fee}. Reply here and I will unlock it right away. Your data is safe. 🙏",
+  cancelled:"Hello {store}, your PhotoPrint Pro access is cancelled. If you would like to come back, reply here and I will reactivate it right away. 🙏"
+};
+const TNAME={welcome:'Welcome',reminder:'Expiry reminder',expired:'Expired – renew',renewed:'Renewed – thank you',cancelled:'Cancelled / win-back',update:'Update fee – pay to unlock'};
+
+/* ---------------- data layer ---------------- */
+let auth=null;try{auth=JSON.parse(localStorage.getItem(AK)||'null');}catch(e){}
+async function refresh(){
+  if(!auth||!auth.refresh_token)return false;
+  const r=await fetch(BASE+'/auth/v1/token?grant_type=refresh_token',{method:'POST',headers:{'Content-Type':'application/json',apikey:CFG.SUPABASE_KEY},body:JSON.stringify({refresh_token:auth.refresh_token})});
+  if(!r.ok)return false;const j=await r.json();auth={access_token:j.access_token,refresh_token:j.refresh_token,email:auth.email};localStorage.setItem(AK,JSON.stringify(auth));return true;
+}
+async function rest(path,o={}){
+  const go=()=>fetch(BASE+'/rest/v1/'+path,{method:o.method||'GET',headers:Object.assign({apikey:CFG.SUPABASE_KEY,Authorization:'Bearer '+(auth?auth.access_token:CFG.SUPABASE_KEY),'Content-Type':'application/json'},o.prefer?{Prefer:o.prefer}:{}),body:o.body?JSON.stringify(o.body):undefined});
+  let r=await go();
+  if(r.status===401&&await refresh())r=await go();
+  if(r.status===401){logout(true);throw new Error('Session expired. Sign in again.');}
+  if(!r.ok)throw new Error((await r.text()).slice(0,200));
+  return r.status===204?null:r.json();
+}
+const ldb=()=>{try{const d=JSON.parse(localStorage.getItem(DK));if(d&&d.stores)return d;}catch(e){}return{stores:[],log:[],settings:{trial_days:CFG.DEFAULT_TRIAL,contact_whatsapp:CFG.DEFAULT_CONTACT,templates:{}}};};
+const lput=d=>localStorage.setItem(DK,JSON.stringify(d));
+const DB={
+  async esSum(){if(!cloud)return[];try{return await rest('rpc/admin_estamp_summary',{method:'POST',body:{}});}catch(e){ES_ERR=e.message;return[];}},
+  async esRows(wa){return rest('estamp_entries?whatsapp=eq.'+encodeURIComponent(wa)+'&select=*&order=date.desc,ts.desc&limit=1000');},
+  async stores(){if(cloud)return rest('stores?select=*&order=created_at.desc&limit=1000');return ldb().stores.slice();},
+  async settings(){if(cloud){const r=await rest('settings?id=eq.1&select=*');return r[0]||{trial_days:50,contact_whatsapp:CFG.DEFAULT_CONTACT,templates:{}};}return ldb().settings;},
+  async saveSettings(p){if(cloud){await rest('settings?id=eq.1',{method:'PATCH',body:p});return;}const d=ldb();Object.assign(d.settings,p);lput(d);},
+  async add(row){if(cloud){const r=await rest('stores',{method:'POST',body:row,prefer:'return=representation'});return r[0];}const d=ldb();if(d.stores.some(s=>s.whatsapp===row.whatsapp))throw new Error('This WhatsApp number already exists.');const s=Object.assign({id:'d'+Date.now().toString(36)+Math.random().toString(36).slice(2,6),created_at:new Date().toISOString(),login_count:0,renewal_requested_at:null},row);d.stores.push(s);lput(d);return s;},
+  async upd(ids,p){ids=[].concat(ids);if(cloud){return rest('stores?id=in.('+ids.join(',')+')',{method:'PATCH',body:p,prefer:'return=representation'});}const d=ldb();d.stores.forEach(s=>{if(ids.includes(s.id))Object.assign(s,p);});lput(d);},
+  async del(ids){ids=[].concat(ids);if(cloud){return rest('stores?id=in.('+ids.join(',')+')',{method:'DELETE'});}const d=ldb();d.stores=d.stores.filter(s=>!ids.includes(s.id));d.log=d.log.filter(l=>!ids.includes(l.store_id));lput(d);},
+  async pay(){try{if(cloud)return await rest('store_log?action=eq.granted&select=store_id,at,detail&order=at.desc&limit=3000');return ldb().log.filter(l=>l.action==='granted');}catch(e){return[];}},
+  async log(id){if(cloud)return rest('store_log?store_id=eq.'+id+'&order=at.desc&limit=60');return ldb().log.filter(l=>l.store_id===id).sort((a,b)=>b.at.localeCompare(a.at)).slice(0,60);},
+  async addLog(id,action,detail,re){try{if(cloud){await rest('store_log',{method:'POST',body:{store_id:id,action,detail}});return;}const d=ldb();d.log.push({id:Date.now()+Math.random(),store_id:id,at:new Date().toISOString(),action,detail});lput(d);}catch(e){if(!re&&!['created','granted','expired','edited','blocked','unblocked'].includes(action))return DB.addLog(id,'edited',action+': '+detail,1);}}
+};
+
+/* ---------------- state ---------------- */
+let ES_ERR='',esSum=[],tab='stores',pays=[],K=null,stores=[],cfg={trial_days:50,contact_whatsapp:CFG.DEFAULT_CONTACT,templates:{}},filter='all',sel=new Set(),openId=null;
+const T=k=>(cfg.templates&&cfg.templates[k])||DEF_T[k];
+const std=()=>{const o=(cfg.templates||{}).std||{};return{value:1,unit:'lifetime',price:(o.unit==='lifetime'&&o.price)||'299'};};const LNAME=()=>'Lifetime v'+CFG.PAID_VER;const updFee=()=>(cfg.templates&&cfg.templates.updFee)||'149';
+const stdPlan=()=>({name:LNAME(),value:1,unit:'lifetime',price:std().price});
+const fill=(t,s)=>t.replace(/\{store\}/g,s.store_name).replace(/\{date\}/g,life(s.expires_at)?'lifetime':fd(s.expires_at)).replace(/\{days\}/g,Math.max(0,dl(s))).replace(/\{plan\}/g,s.plan).replace(/\{ver\}/g,CFG.PAID_VER).replace(/\{fee\}/g,updFee());
+const waUrl=(num,msg)=>'https://wa.me/'+num+'?text='+encodeURIComponent(msg);
+const TAG=/^\[(Cancelled|Won't renew)[^\]]*\]\s*/;
+const tagOf=s=>{const m=(s.notes||'').match(TAG);return m?m[1]:'';};
+const untag=n=>(n||'').replace(TAG,'').trim()||null;
+const amtOf=d=>{const m=/₹(-?\d+)/.exec(d||'');return m?+m[1]:0;};
+const defTpl=s=>tagOf(s)==='Cancelled'?'cancelled':({active:'reminder',expiring:'reminder',expired:'expired',blocked:'expired',update:'update'}[stateOf(s)]);
+const plans=()=>[stdPlan()];
+/* E-Stamp access: shop override > global trial rule > allowed */
+const feat=s=>(s&&s.features&&typeof s.features==='object')?s.features:{};
+const esMode=s=>feat(s).estamp===true?'yes':feat(s).estamp===false?'no':'auto';
+const esOn=s=>{const m=esMode(s);if(m==='yes')return true;if(m==='no')return false;return s.plan==='trial'?((cfg.templates||{}).estampTrial!=='off'):true;};
+const saveCsv=(rows,name)=>{const body='\ufeff'+rows.map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\r\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([body],{type:'text/csv'}));a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000);};
+
+/* ---------------- list ---------------- */
+function counts(){
+  const c={all:stores.length,active:0,expiring:0,expired:0,blocked:0,requested:0,week:0,trialend:0,cancelled:0,update:0,paid:0};
+  stores.forEach(s=>{const st=stateOf(s);if(st==='active'||st==='expiring')c.active++;if(st==='expiring')c.expiring++;if(st==='expired')c.expired++;if(st==='expired'&&s.plan==='trial')c.trialend++;if(st==='blocked')c.blocked++;if(st==='update')c.update++;if(st!=='blocked'&&verOf(s)>=CFG.PAID_VER)c.paid++;if(st==='expired'&&tagOf(s)==='Cancelled')c.cancelled++;if(s.renewal_requested_at)c.requested++;if(Date.now()-new Date(s.created_at)<7*DAY)c.week++;});
+  return c;
+}
+function renderStats(){
+  const c=counts(),defs=[['all','All stores',c.all,''],['active','Active',c.active,'g'],['expiring','Expiring ≤ 7 days',c.expiring,'w'],['expired','Expired',c.expired,'r'],['trialend','Trial ended (not renewed)',c.trialend,'r'],['update','Update fee pending 🔒',c.update,'r'],['paid','Paid · v'+CFG.PAID_VER+' ✓',c.paid,'g'],['blocked','Blocked',c.blocked,''],['cancelled','Cancelled',c.cancelled,''],['requested','Renewal requests',c.requested,'w'],['week','New this week',c.week,'']];
+  $('stats').innerHTML=defs.map(d=>`<button class="st ${d[3]} ${filter===d[0]?'on':''}" data-f="${d[0]}"><b>${d[2]}</b><span>${d[1]}</span></button>`).join('');
+}
+function view(){
+  const q=$('q').value.trim().toLowerCase();
+  let l=stores.filter(s=>{
+    const st=stateOf(s);
+    if(filter==='active'&&!(st==='active'||st==='expiring'))return false;
+    if(filter==='expiring'&&st!=='expiring')return false;
+    if(filter==='expired'&&st!=='expired')return false;
+    if(filter==='blocked'&&st!=='blocked')return false;if(filter==='update'&&st!=='update')return false;if(filter==='paid'&&!(st!=='blocked'&&verOf(s)>=CFG.PAID_VER))return false;
+    if(filter==='cancelled'&&!(st==='expired'&&tagOf(s)==='Cancelled'))return false;
+    if(filter==='trialend'&&!(st==='expired'&&s.plan==='trial'))return false;
+    if($('planF').value&&s.plan!==$('planF').value)return false;
+    if(filter==='requested'&&!s.renewal_requested_at)return false;
+    if(filter==='week'&&!(Date.now()-new Date(s.created_at)<7*DAY))return false;
+    return !q||(s.store_name+' '+s.whatsapp+' '+(s.notes||'')).toLowerCase().includes(q);
+  });
+  const so=$('sort').value,t=x=>x?new Date(x).getTime():0;
+  l.sort({new:(a,b)=>t(b.created_at)-t(a.created_at),exp:(a,b)=>t(a.expires_at)-t(b.expires_at),name:(a,b)=>a.store_name.localeCompare(b.store_name),login:(a,b)=>t(b.last_login_at)-t(a.last_login_at),count:(a,b)=>(b.login_count||0)-(a.login_count||0)}[so]);
+  return l;
+}
+function renderRows(){
+  const l=view();
+  $('rows').innerHTML=l.map(s=>{
+    const st=stateOf(s),d=dl(s);
+    const left=life(s.expires_at)?(st==='update'?'Locked · update fee pending':'Lifetime'):st==='expired'?`${-d} day${d===-1?'':'s'} ago`:`${d} day${d===1?'':'s'} left`;
+    return `<tr data-id="${s.id}">
+      <td><input type="checkbox" class="ck" ${sel.has(s.id)?'checked':''} aria-label="Select"></td>
+      <td><span class="nm" data-open>${esc(s.store_name)}</span>${s.renewal_requested_at?` <span class="pill req" title="Asked to renew ${fdt(s.renewal_requested_at)}">🔔 Requested</span>`:''}${s.notes?`<small>${esc(s.notes.slice(0,40))}</small>`:''}</td>
+      <td>${pretty(s.whatsapp)}</td><td>${esc(s.plan)}</td><td>${fd(s.created_at)}</td><td>${fdt(s.last_login_at)}</td><td>${s.login_count||0}</td>
+      <td>${life(s.expires_at)?'Lifetime':fd(s.expires_at)}<small>${left}</small></td>
+      <td>${st==='expired'&&tagOf(s)==='Cancelled'?'<span class="pill p-blocked">Cancelled</span>':`<span class="pill p-${st}">${LBL[st]}</span>`}${tagOf(s)==="Won't renew"&&st!=='expired'?' <span class="pill tag">Not renewing</span>':''}</td>
+      <td><div class="acts">${verOf(s)>=CFG.PAID_VER&&st!=='blocked'?'':`<button class="btn s" data-grant>${st==='update'?'Collect update fee':st==='expired'||st==='blocked'?'Re-activate':'Make lifetime'}</button>`}${st==='active'||st==='expiring'||st==='update'?'<button class="btn s d" data-cancel>Cancel</button>':''}<a class="btn s wa" target="_blank" rel="noopener" href="${waUrl(s.whatsapp,fill(T(defTpl(s)),s))}">WhatsApp</a><button class="btn s o" data-open>Open</button></div></td></tr>`;
+  }).join('');
+  const e=$('empty');e.hidden=l.length>0;e.textContent=stores.length?'No stores match this filter.':'No stores yet. When a store logs in from the app, it shows up here. You can also add one with "+ Add store".'+(cloud?'':' (Demo mode: stores show here only if index.html is opened from the same address/folder as this page.)');
+  $('chkAll').checked=l.length>0&&l.every(s=>sel.has(s.id));
+  renderSel();
+}
+function renderSel(){
+  const b=$('selBar'),n=sel.size;b.hidden=!n;if(!n)return;
+  b.innerHTML=`<b>${n} selected</b><button class="btn" data-b="grant">Renew…</button><button class="btn d" data-b="cancel">Cancel…</button><button class="btn" data-b="block">Block</button><button class="btn" data-b="unblock">Unblock</button><button class="btn d" data-b="del">Delete</button><button class="btn o" data-b="clear" style="margin-left:auto">Clear</button>`;
+}
+function renderAll(){
+  const pf=$('planF'),cur=pf.value,names=[...new Set(stores.map(s=>s.plan).filter(Boolean))].sort();
+  pf.innerHTML='<option value="">All plans</option>'+names.map(n=>`<option ${n===cur?'selected':''} value="${esc(n)}">${esc(n)}</option>`).join('');
+  renderStats();renderRev();renderRows();
+}
+async function load(){
+  try{[stores,cfg,pays,esSum]=await Promise.all([DB.stores(),DB.settings(),DB.pay(),DB.esSum()]);cfg.templates=cfg.templates||{};try{if(cfg.templates.stdPlan!=='Lifetime'){const t=Object.assign({},cfg.templates,{std:{value:1,unit:'lifetime',price:std().price},stdPlan:'Lifetime',stdPrice:std().price});delete t.plans;await DB.saveSettings({templates:t});cfg.templates=t;}}catch(e){}}catch(e){toast('Could not load: '+e.message);return;}
+  sel=new Set([...sel].filter(id=>stores.some(s=>s.id===id)));renderAll();if(tab==='estamp')renderEs();if(openId)openStore(openId,true);
+}
+
+/* ---------------- access plans + grant ---------------- */
+function addDur(base,v,unit){
+  const d=new Date(base);
+  if(unit==='days'){d.setDate(d.getDate()+v);return d;}
+  const day=d.getDate();d.setDate(1);
+  if(unit==='months')d.setMonth(d.getMonth()+v);else d.setFullYear(d.getFullYear()+v);
+  d.setDate(Math.min(day,new Date(d.getFullYear(),d.getMonth()+1,0).getDate()));return d;
+}
+const endOfDay=d=>{d=new Date(d);d.setHours(23,59,59,0);return d;};
+const LIFE_END=()=>new Date('2099-12-31T23:59:59.000Z');
+const unitLbl=(n,u)=>n+' '+(n===1?u.replace(/s$/,''):u);
+let G=null,UNDO=null;
+function planOf(){
+  if(G.sel==='c'){const u=$('ppU').value,n=Math.max(1,parseInt($('ppN').value,10)||1);return u==='lifetime'?{name:'Lifetime',value:1,unit:'lifetime',price:''}:{name:unitLbl(n,u),value:n,unit:u,price:''};}
+  return G.pl[G.sel];
+}
+function newEnd(s,pl){
+  if(pl.unit==='lifetime')return LIFE_END();
+  const base=(G.mode==='now'||life(s.expires_at))?new Date():new Date(Math.max(Date.now(),new Date(s.expires_at).getTime()));
+  return endOfDay(addDur(base,pl.value,pl.unit));
+}
+function gmUpdate(){
+  if(!G||!$('gPrev'))return;
+  const pl=planOf(),list=stores.filter(s=>G.ids.includes(s.id)),sk=String(G.sel);
+  document.querySelectorAll('.pc').forEach(b=>b.classList.toggle('on',b.dataset.i===sk));
+  document.querySelectorAll('.mc').forEach(b=>b.classList.toggle('on',b.dataset.m===G.mode));
+  document.querySelectorAll('.pm').forEach(b=>b.classList.toggle('on',b.dataset.p===G.pay));
+  $('gCust').hidden=G.sel!=='c';$('gCustomN').hidden=$('ppU').value==='lifetime';
+  if(G.pf!==sk){$('gAmt').value=pl.price||'';G.pf=sk;}
+  const amt=$('gAmt').value;$('gGo').textContent='Confirm · '+pl.name+(amt?' · ₹'+amt:'');
+  if(list.length===1){const s=list[0],e=newEnd(s,pl);$('gPrev').innerHTML=pl.unit==='lifetime'?'Access will never expire.':`${life(s.expires_at)?'Lifetime':fd(s.expires_at)} → <b>${fd(e)}</b><br><span style="font-size:13px;color:var(--muted);font-weight:600">${Math.ceil((e-Date.now())/DAY)} days from today</span>`;}
+  else $('gPrev').innerHTML=pl.unit==='lifetime'?'These stores will never expire.':`Each of the <b>${list.length}</b> stores gets its own new end date.`;
+}
+function openGrant(ids){
+  const list=stores.filter(s=>ids.includes(s.id));if(!list.length)return;
+  const one=list.length===1?list[0]:null,upd=list.every(s=>verOf(s)!=null),pl=plans().map(p=>Object.assign({},p,{price:upd?updFee():p.price}));
+  G={ids:list.map(s=>s.id),pl,sel:Math.max(0,pl.findIndex(p=>p.name===stdPlan().name)),mode:'ext',pay:'UPI',pf:null};openId=null;
+  modal(`<div class="hd"><h2>Renew · ${one?esc(one.store_name):list.length+' stores'}</h2><button class="x" data-close>×</button></div>
+  ${one?`<p class="hint" style="margin:0 0 10px">Now: <b>${LBL[stateOf(one)]}</b>${life(one.expires_at)?' · lifetime':' · ends '+fd(one.expires_at)}</p>`:''}
+  <div class="chips">${pl.map((p,i)=>`<button class="chip pc" data-i="${i}">${esc(p.name)}${p.price?`<small>₹${esc(p.price)}</small>`:''}</button>`).join('')}<button class="chip pc" data-i="c">Extend trial days…</button></div>
+  <div id="gCust" class="g2" hidden style="margin-top:10px"><label class="f" id="gCustomN">Number<input type="number" id="ppN" min="1" value="7"></label><label class="f">Unit<select id="ppU"><option value="days" selected>days</option></select></label></div>
+  <div class="chips" style="margin-top:12px"><button class="chip mc" data-m="ext">Add after current end</button><button class="chip mc" data-m="now">Start from today</button></div>
+  <div class="big" id="gPrev"></div>
+  <div class="g2"><label class="f">Amount received (₹${list.length>1?' per store':''})<input type="number" id="gAmt" min="0"></label><label class="f">Note<input type="text" id="gNote" maxlength="80" placeholder="Optional"></label></div>
+  <div class="chips" style="margin-top:8px">${['UPI','Cash','Bank'].map(m=>`<button class="chip pm" data-p="${m}">${m}</button>`).join('')}</div>
+  <p class="hint">Leave amount empty for a free renewal. Cancelled / blocked stores are re-activated.</p>
+  <button class="btn" id="gGo" style="margin-top:12px;width:100%;padding:14px;font-size:16px"></button>`);
+  gmUpdate();
+}
+async function doGrant(){
+  const pl=planOf(),amt=$('gAmt').value.trim(),note=$('gNote').value.trim(),pay=G.pay;
+  const list=stores.filter(s=>G.ids.includes(s.id));$('gGo').disabled=true;const prev=snap(list);
+  for(const s of list){
+    const e=newEnd(s,pl);
+    await DB.upd(s.id,{expires_at:e.toISOString(),plan:pl.name,status:'active',renewal_requested_at:null,notes:untag(s.notes)});
+    await DB.addLog(s.id,'granted',pl.name+(pl.unit==='lifetime'?'':' · until '+fd(e))+(amt?' · ₹'+amt+' · '+pay:'')+(note?' · '+note:''));
+  }
+  UNDO={prev,label:'Renewal',amt:amt||0};const ids=G.ids;G=null;await load();
+  if(ids.length===1){
+    const s=stores.find(x=>x.id===ids[0]);
+    modal(`<div class="hd"><h2>✅ Renewed</h2><button class="x" data-close>×</button></div>
+      <p style="margin:0 0 14px"><b>${esc(s.store_name)}</b> · ${esc(pl.name)}${amt?' · ₹'+esc(amt):''}<br>${life(s.expires_at)?'Never expires.':'Access till <b>'+fd(s.expires_at)+'</b>.'}</p>
+      <a class="btn wa" target="_blank" rel="noopener" href="${waUrl(s.whatsapp,fill(T('renewed'),s))}" style="display:block;text-align:center;padding:13px">Tell the store on WhatsApp</a>
+      <button class="btn o" data-close style="width:100%;margin-top:8px">Done</button>
+      <button class="btn d" data-undo style="width:100%;margin-top:8px">Undo this renewal</button>`);
+  }else{closeLayer();toast(ids.length+' stores renewed: '+pl.name,1);}
+}
+function openCancel(ids){
+  const list=stores.filter(s=>ids.includes(s.id));if(!list.length)return;
+  K={ids:list.map(s=>s.id),reason:''};const one=list.length===1?list[0]:null;
+  modal(`<div class="hd"><h2>Cancel · ${one?esc(one.store_name):list.length+' stores'}</h2><button class="x" data-close>×</button></div>
+  <p class="hint" style="margin:0 0 8px">Why are they leaving?</p>
+  <div class="chips">${['Too expensive','Not using it','Switched to another','Shop closed','Other'].map(r=>`<button class="chip cr">${r}</button>`).join('')}</div>
+  <label class="f" style="margin-top:10px">Note (optional)<input type="text" id="kNote" maxlength="80"></label>
+  <div class="rd"><label><input type="radio" name="kw" value="now" checked> Cancel access now</label><label><input type="radio" name="kw" value="end"> Let it run till end date, don't renew</label></div>
+  <p class="hint">The store stays in your list with a Cancelled tag and the reason, so you can win them back later. You can undo right after.</p>
+  <button class="btn d" id="kGo" style="margin-top:12px;width:100%;padding:13px">Confirm cancellation</button>`);
+}
+async function doCancel(){
+  const w=document.querySelector('input[name=kw]:checked').value,nt=$('kNote').value.trim(),r=(K.reason||'')+(nt?(K.reason?' – ':'')+nt:'');
+  const list=stores.filter(x=>K.ids.includes(x.id)),prev=snap(list),day=new Date().toLocaleDateString('en-IN',{day:'numeric',month:'short'});$('kGo').disabled=true;
+  for(const s of list){
+    const p={notes:('['+(w==='now'?'Cancelled '+day:"Won't renew")+(r?': '+r:'')+'] '+(untag(s.notes)||'')).trim(),renewal_requested_at:null};
+    if(w==='now')p.expires_at=new Date().toISOString();
+    await DB.upd(s.id,p);await DB.addLog(s.id,'cancelled',(w==='now'?'Access ended now':"Won't renew after "+fd(s.expires_at))+(r?' · '+r:''));
+  }
+  UNDO={prev,label:'Cancellation'};K=null;closeLayer();await load();toast(list.length+' store(s) cancelled.',1);
+}
+
+function renderRev(){
+  const n=new Date(),m=pays.filter(p=>{const d=new Date(p.at);return d.getMonth()===n.getMonth()&&d.getFullYear()===n.getFullYear();});
+  const sum=a=>a.reduce((x,p)=>x+amtOf(p.detail),0),f=v=>'₹'+v.toLocaleString('en-IN');
+  $('rev').innerHTML=`<button class="rv" data-pays><b>${f(sum(m))}</b><span>Received this month · ${m.filter(p=>amtOf(p.detail)>0).length} renewals</span></button><button class="rv" data-pays><b>${f(sum(pays))}</b><span>Total received · tap for payment list</span></button>`;
+}
+function paysModal(){
+  const nm=id=>(stores.find(x=>x.id===id)||{}).store_name||'(deleted)',l=pays.filter(p=>amtOf(p.detail));
+  modal(`<div class="hd"><h2>Payments</h2><button class="x" data-close>×</button></div><div class="tw" style="max-height:60vh"><table style="min-width:0"><thead><tr><th>Date</th><th>Store</th><th>Details</th></tr></thead><tbody>${l.map(p=>`<tr><td>${fdt(p.at)}</td><td>${esc(nm(p.store_id))}</td><td>${esc(p.detail)}</td></tr>`).join('')||'<tr><td colspan="3">No payments yet. Enter the amount when you renew a store.</td></tr>'}</tbody></table></div><button class="btn o" id="payCsv" style="margin-top:12px">⬇ Export payments CSV</button>`);
+  document.querySelector('.md').style.width='min(760px,100%)';
+  $('payCsv').onclick=()=>saveCsv([['Date','Store','Amount','Details']].concat(l.map(p=>[fdt(p.at),nm(p.store_id),amtOf(p.detail),p.detail])),'photoprint-payments-'+new Date().toISOString().slice(0,10)+'.csv');
+}
+const snap=l=>l.map(x=>({id:x.id,p:{expires_at:x.expires_at,plan:x.plan,status:x.status,renewal_requested_at:x.renewal_requested_at,notes:x.notes}}));
+async function undo(){
+  if(!UNDO)return;const u=UNDO;UNDO=null;
+  for(const x of u.prev){await DB.upd(x.id,x.p);await DB.addLog(x.id,'edited','Undid last '+u.label.toLowerCase());if(u.amt)await DB.addLog(x.id,'granted','Undone · ₹-'+u.amt);}
+  closeLayer();toast('Undone.');await load();
+}
+
+/* ---------------- drawer ---------------- */
+function closeLayer(){$('layer').innerHTML='';openId=null;G=null;}
+function ovClick(e,box){if(e.target===box)closeLayer();}
+async function openStore(id,keep){
+  const s=stores.find(x=>x.id===id);if(!s){closeLayer();return;}
+  openId=id;const st=stateOf(s);
+  const keepScroll=keep&&$('layer').firstElementChild?$('layer').firstElementChild.firstElementChild.scrollTop:0;
+  const lay=$('layer');
+  const tk=defTpl(s);
+  lay.innerHTML=`<div class="ov" id="ov"><div class="dr" id="dr">
+    <div class="hd"><h2>${esc(s.store_name)}</h2><span class="pill p-${st}">${LBL[st]}</span><button class="x" data-close aria-label="Close">×</button></div>
+    <div class="kv"><span>WhatsApp</span><b>${pretty(s.whatsapp)}</b><span>Joined</span><b>${fd(s.created_at)}</b><span>Last login</span><b>${fdt(s.last_login_at)} · ${s.login_count||0} logins</b><span>Device</span><b style="font-weight:500">${esc(s.last_device||'–')}</b><span>Access ends</span><b>${life(s.expires_at)?'Lifetime':fd(s.expires_at)+' ('+(dl(s)<0?-dl(s)+' days ago':dl(s)+' days left')+')'}</b></div>
+    ${s.renewal_requested_at?`<div class="err" style="background:#e6ecff;border-color:#b9c6f5;color:#1d3f9e">🔔 Asked to renew on ${fdt(s.renewal_requested_at)}</div>`:''}
+    <div class="sec"><h3>Access</h3>
+      <button class="btn" data-grant1 style="width:100%;padding:12px">Grant / renew access</button>
+      <p class="hint">Pick Lifetime (or extend trial days). When you release a paid update, older stores lock until they pay the update fee.</p>
+      <div class="g2" style="margin-top:10px"><label class="f">Set exact end date<input type="date" id="dDate" value="${life(s.expires_at)?'':new Date(s.expires_at).toISOString().slice(0,10)}"></label><div style="align-self:end"><button class="btn o" data-setdate style="width:100%">Set date</button></div></div>
+      <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">${s.status==='blocked'?'<button class="btn" data-unblock>Unblock store</button>':'<button class="btn d" data-block>Block store</button>'}<button class="btn o" data-now>Expire now</button><button class="btn d" data-cancel1>Cancel subscription</button></div>
+    </div>
+    <div class="sec"><h3>Features (what this shop can use)</h3>
+      <div class="ft"><div><b>🧾 E-Stamp register</b><small>${esMode(s)==='auto'?'Following default: '+(esOn(s)?'allowed':'locked'):'Set by you'} · saves to cloud</small></div>
+        <div class="seg" data-esmode>${[['auto','Default'],['yes','Allow'],['no','Lock']].map(m=>`<button class="${m[0]===esMode(s)?'on '+m[0]:''}" data-m="${m[0]}">${m[1]}</button>`).join('')}</div></div>
+      ${life(s.expires_at)?'':`<div class="qx"><span>Extend trial:</span>${[7,15,30,50].map(n=>`<button class="btn s o" data-ext="${n}">+${n} days</button>`).join('')}</div>`}
+    </div>
+    <div class="sec"><h3>WhatsApp message</h3>
+      <label class="f">Template<select id="tpl">${Object.keys(TNAME).map(k=>`<option value="${k}" ${k===tk?'selected':''}>${TNAME[k]}</option>`).join('')}</select></label>
+      <label class="f" style="margin-top:8px">Message (you can edit)<textarea id="tmsg" rows="4"></textarea></label>
+      <a class="btn wa" id="tsend" target="_blank" rel="noopener" style="display:block;text-align:center;margin-top:8px;text-decoration:none">Open in WhatsApp</a>
+    </div>
+    <div class="sec"><h3>Details</h3>
+      <div class="g2"><label class="f">Store name<input type="text" id="eName" value="${esc(s.store_name)}"></label><label class="f">WhatsApp<input type="tel" id="eWa" value="${esc(s.whatsapp)}"></label></div>
+      <label class="f" style="margin-top:10px">Plan name<input type="text" id="ePlan" list="planList" value="${esc(s.plan)}"><datalist id="planList">${['trial',stdPlan().name].map(n=>`<option value="${esc(n)}">`).join('')}</datalist></label>
+      <label class="f" style="margin-top:10px">Private notes<textarea id="eNotes" rows="3" placeholder="Payment received, contact person, area…">${esc(s.notes||'')}</textarea></label>
+      <button class="btn" data-save style="margin-top:10px">Save details</button>
+    </div>
+    <div class="sec"><h3>Payments</h3>${(()=>{const l=pays.filter(p=>p.store_id===s.id&&amtOf(p.detail));return l.length?l.map(p=>`<div class="pl"><span>${fd(p.at)}</span><b>${amtOf(p.detail)<0?'-':''}₹${Math.abs(amtOf(p.detail))}</b><small>${esc(p.detail.split(' · ')[0])}</small></div>`).join(''):'<p class="hint" style="margin:0">No payments recorded.</p>';})()}</div>
+    <div class="sec"><h3>Activity</h3><div class="log" id="logBox">Loading…</div></div>
+    <div class="sec"><button class="btn d" data-del>Delete this store</button></div>
+  </div></div>`;
+  const dr=$('dr');dr.scrollTop=keepScroll;
+  const upd=()=>{const t=$('tpl').value;$('tmsg').value=fill(T(t),s);setWa();};
+  const setWa=()=>{$('tsend').href=waUrl(s.whatsapp,$('tmsg').value);};
+  upd();$('tpl').onchange=upd;$('tmsg').oninput=setWa;
+  DB.log(id).then(rows=>{const b=$('logBox');if(!b||openId!==id)return;b.innerHTML=rows.length?rows.map(r=>`<div><time>${fdt(r.at)}</time><span><b>${esc(r.action.replace('_',' '))}</b> ${esc(r.detail||'')}</span></div>`).join(''):'No activity yet.';}).catch(()=>{});
+  $('ov').onclick=e=>ovClick(e,$('ov'));
+}
+
+/* ---------------- modals ---------------- */
+function modal(html){const l=$('layer');l.innerHTML=`<div class="ov c" id="ov"><div class="md">${html}</div></div>`;$('ov').onclick=e=>ovClick(e,$('ov'));}
+function addModal(){
+  modal(`<div class="hd"><h2>Add store</h2><button class="x" data-close>×</button></div>
+  <label class="f">Store name<input type="text" id="nName"></label>
+  <label class="f" style="margin-top:10px">WhatsApp number<input type="tel" id="nWa" placeholder="98765 43210"></label>
+  <label class="f" style="margin-top:10px">Starting plan<select id="nPlan"><option value="t">Free trial (${cfg.trial_days} days)</option><option value="s">Lifetime paid (${esc(stdPlan().name)})</option></select></label>
+  <label class="f" style="margin-top:10px">Notes<textarea id="nNotes" rows="2"></textarea></label>
+  <div class="err" id="nErr" hidden></div>
+  <button class="btn" id="nSave" style="margin-top:14px;width:100%;padding:12px">Add store</button>`);
+  $('nSave').onclick=async()=>{
+    const name=$('nName').value.trim(),w=norm($('nWa').value);
+    const bad=m=>{$('nErr').hidden=false;$('nErr').textContent=m;};
+    if(name.length<2)return bad('Enter the store name.');if(w.length<11||w.length>15)return bad('Enter a valid WhatsApp number.');
+    try{
+      const v=$('nPlan').value;let plan,exp;
+      if(v==='t'){plan='trial';exp=endOfDay(addDur(new Date(),cfg.trial_days,'days'));}
+      else{const pl=stdPlan();plan=pl.name;exp=pl.unit==='lifetime'?LIFE_END():endOfDay(addDur(new Date(),pl.value,pl.unit));}
+      const st=await DB.add({store_name:name,whatsapp:w,plan,status:'active',expires_at:exp.toISOString(),notes:$('nNotes').value.trim()||null});
+      await DB.addLog(st.id,'created','Added by admin · '+plan);closeLayer();toast('Store added.');await load();openStore(st.id);
+    }catch(e){bad(/duplicate|unique|exists/i.test(e.message)?'This WhatsApp number already exists.':e.message);}
+  };
+}
+function settingsModal(){
+  const t=k=>esc(T(k)),x=stdPlan();
+  modal(`<div class="hd"><h2>Settings</h2><button class="x" data-close>×</button></div>
+  <label class="f">Free trial for new shops (days)<input type="number" id="sTrial" min="1" max="365" value="${cfg.trial_days}"></label>
+  <div class="g2" style="margin-top:14px"><label class="f">Lifetime price (₹) · new shops<input type="number" id="sStdP" min="0" value="${esc(x.price)}"></label><label class="f">Update fee (₹) · old lifetime shops<input type="number" id="sUpd" min="0" value="${esc(updFee())}"></label></div><p class="hint">One-time payment, lifetime access. Current paid version: <b>v${CFG.PAID_VER}</b>. To release a paid update, bump PAID_VER in both files: every shop on an older version locks until it pays the update fee.</p>
+  <div class="ft" style="margin-top:14px"><div><b>🧾 E-Stamp during free trial</b><small>Allowed = every trial shop can use it. Locked = only shops you Allow, or paid shops.</small></div><div class="seg" id="sEs">${[['on','Allowed'],['off','Locked']].map(m=>`<button type="button" data-v="${m[0]}" class="${(cfg.templates||{}).estampTrial===m[0]||(m[0]==='on'&&(cfg.templates||{}).estampTrial!=='off')?'on '+(m[0]==='on'?'yes':'no'):''}">${m[1]}</button>`).join('')}</div></div>
+  <label class="f" style="margin-top:14px">Your WhatsApp number (with country code)<input type="tel" id="sWa" value="${esc(cfg.contact_whatsapp)}"></label>
+  <details class="dt"><summary>Message templates (optional)</summary><p class="hint" style="margin:6px 0 0">Use {store} {date} {days} {plan}.</p>
+  ${Object.keys(TNAME).map(k=>`<label class="f" style="margin-top:8px">${TNAME[k]}<textarea id="t_${k}" rows="3">${t(k)}</textarea></label>`).join('')}
+  <button class="btn o s" id="sReset" style="margin-top:10px">Reset templates</button></details>
+  <button class="btn" id="sSave" style="margin-top:16px;width:100%;padding:13px">Save settings</button>`);
+
+
+  $('sEs').onclick=e=>{const b=e.target.closest('button');if(!b)return;[...$('sEs').children].forEach(x=>x.className='');b.className='on '+(b.dataset.v==='on'?'yes':'no');};
+  $('sReset').onclick=()=>{Object.keys(TNAME).forEach(k=>$('t_'+k).value=DEF_T[k]);};
+  $('sSave').onclick=async()=>{
+    const w=norm($('sWa').value),days=Math.max(1,Math.min(365,+$('sTrial').value||50));
+    if(w.length<11){toast('Enter a valid WhatsApp number.');return;}
+    const price=$('sStdP').value.trim(),upd=$('sUpd').value.trim();
+    const templates={};Object.keys(TNAME).forEach(k=>{const v=$('t_'+k).value.trim();if(v&&v!==DEF_T[k])templates[k]=v;});
+
+    templates.std={value:1,unit:'lifetime',price};templates.stdPlan='Lifetime';templates.stdPrice=price;templates.updFee=upd;{const b=$('sEs').querySelector('.on');templates.estampTrial=b&&b.dataset.v==='off'?'off':'on';}
+    try{await DB.saveSettings({trial_days:days,contact_whatsapp:w,templates});closeLayer();toast('Settings saved.');await load();}catch(e){toast('Could not save: '+e.message);}
+  };
+}
+
+/* ---------------- E-Stamp tab ---------------- */
+const inr=n=>'₹'+Math.round(+n||0).toLocaleString('en-IN');
+const esFor=wa=>esSum.find(x=>x.whatsapp===wa)||{entries:0,sales:0,profit:0};
+function renderEs(){
+  const q=$('esQ').value.trim().toLowerCase(),f=$('esF').value;
+  const tot=esSum.reduce((a,x)=>({n:a.n+ +x.entries,s:a.s+ +x.sales,p:a.p+ +x.profit}),{n:0,s:0,p:0});
+  $('esKpi').innerHTML=`<div class="rv"><b>${esSum.length}</b><span>Shops using E-Stamp</span></div><div class="rv"><b>${tot.n.toLocaleString('en-IN')}</b><span>Total entries</span></div><div class="rv"><b>${inr(tot.s)}</b><span>Total stamp sales</span></div><div class="rv"><b>${inr(tot.p)}</b><span>Total profit</span></div>`;
+  const l=stores.filter(s=>{const d=esFor(s.whatsapp);if(f==='on'&&!esOn(s))return false;if(f==='off'&&esOn(s))return false;if(f==='data'&&!(+d.entries>0))return false;return !q||(s.store_name+' '+s.whatsapp).toLowerCase().includes(q);}).sort((a,b)=>(+esFor(b.whatsapp).entries)-(+esFor(a.whatsapp).entries));
+  $('esRows').innerHTML=l.map(s=>{const d=esFor(s.whatsapp),on=esOn(s);return `<tr data-wa="${s.whatsapp}" data-id="${s.id}">
+    <td><span class="nm" data-esview>${esc(s.store_name)}</span><small>${pretty(s.whatsapp)}</small></td>
+    <td><span class="pill ${on?'p-on':'p-off'}">${on?'Allowed':'Locked'}</span>${esMode(s)==='auto'?'<small>default</small>':''}</td>
+    <td class="num">${d.entries}</td><td class="num">${inr(d.sales)}</td><td class="num">${inr(d.profit)}</td><td>${d.last_entry?fd(d.last_entry):'–'}</td><td>${d.last_sync?fdt(d.last_sync):'–'}</td>
+    <td><div class="acts"><button class="btn s o" data-esview>View data</button><button class="btn s ${on?'d':''}" data-estoggle>${on?'Lock':'Allow'}</button></div></td></tr>`;}).join('');
+  const e=$('esEmpty');e.hidden=l.length>0;e.textContent=ES_ERR?'Could not read E-Stamp data. Run supabase-estamp.sql in Supabase first. ('+ES_ERR.slice(0,90)+')':'No stores match.';
+}
+async function esView(wa){
+  const s=stores.find(x=>x.whatsapp===wa);if(!s)return;
+  modal(`<div class="hd"><h2>E-Stamp · ${esc(s.store_name)}</h2><button class="x" data-close>×</button></div><p class="hint" style="margin:0">Loading…</p>`);
+  let rows=[];try{rows=await DB.esRows(wa);}catch(e){modal(`<div class="hd"><h2>E-Stamp · ${esc(s.store_name)}</h2><button class="x" data-close>×</button></div><div class="err">${esc(e.message)}</div>`);return;}
+  const sales=rows.reduce((a,r)=>a+ +r.amount,0),pf=rows.reduce((a,r)=>a+ +r.profit,0);
+  window.__esRows=rows;window.__esStore=s;
+  modal(`<div class="hd"><h2>E-Stamp · ${esc(s.store_name)}</h2><button class="x" data-close>×</button></div>
+  <div class="revs"><div class="rv"><b>${rows.length}</b><span>Entries${rows.length>=1000?' (latest 1000)':''}</span></div><div class="rv"><b>${inr(sales)}</b><span>Sales</span></div><div class="rv"><b>${inr(pf)}</b><span>Profit</span></div></div>
+  <div class="tw" style="max-height:50vh"><table><thead><tr><th>Date</th><th>Serial</th><th>Phone</th><th class="num">Amount</th><th class="num">Profit</th><th>Note</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${fd(r.date)}</td><td>${esc(r.serial)}</td><td>${esc(r.phone)}</td><td class="num">${inr(r.amount)}</td><td class="num">${inr(r.profit)}</td><td>${esc(r.note)}</td></tr>`).join('')||'<tr><td colspan="6" style="text-align:center;color:var(--muted)">No entries yet.</td></tr>'}</tbody></table></div>
+  <button class="btn" id="esCsvOne" style="margin-top:12px;width:100%">⬇ Export CSV</button>`);
+  $('esCsvOne').onclick=()=>saveCsv([['Date','Serial','Phone','Amount','Profit','Note']].concat(rows.map(r=>[r.date,r.serial,r.phone,r.amount,r.profit,r.note])),'estamp-'+s.store_name.replace(/\W+/g,'_')+'-'+new Date().toISOString().slice(0,10)+'.csv');
+}
+function setTab(n){tab=n;$('vStores').hidden=n!=='stores';$('vEs').hidden=n!=='estamp';document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab===n));if(n==='estamp')renderEs();}
+$('tabs').onclick=e=>{const b=e.target.closest('button');if(b)setTab(b.dataset.tab);};
+$('esQ').oninput=renderEs;$('esF').onchange=renderEs;
+$('esCsvAll').onclick=()=>saveCsv([['Store','WhatsApp','E-Stamp access','Entries','Sales','Profit','Last entry']].concat(stores.map(s=>{const d=esFor(s.whatsapp);return[s.store_name,'+'+s.whatsapp,esOn(s)?'Allowed':'Locked',d.entries,d.sales,d.profit,d.last_entry||''];})),'estamp-summary-'+new Date().toISOString().slice(0,10)+'.csv');
+$('esRows').onclick=async e=>{
+  const tr=e.target.closest('tr[data-wa]');if(!tr)return;
+  if(e.target.closest('[data-esview]'))return esView(tr.dataset.wa);
+  if(e.target.closest('[data-estoggle]')){const s=stores.find(x=>x.id===tr.dataset.id);if(!s)return;const to=!esOn(s),f=Object.assign({},feat(s),{estamp:to});
+    try{await DB.upd(s.id,{features:f});await DB.addLog(s.id,'edited','E-Stamp access: '+(to?'allowed':'locked'));toast('E-Stamp '+(to?'allowed':'locked')+' for '+s.store_name+'.');await load();}catch(er){toast('Run supabase-estamp.sql first (features column missing).');}}
+};
+
+/* ---------------- csv ---------------- */
+function csv(){
+  const rows=[['Store','WhatsApp','Plan','Status','Joined','Last login','Logins','Access ends','Days left','Notes']];
+  view().forEach(s=>rows.push([s.store_name,'+'+s.whatsapp,s.plan,LBL[stateOf(s)],fd(s.created_at),fdt(s.last_login_at),s.login_count||0,life(s.expires_at)?'Lifetime':fd(s.expires_at),life(s.expires_at)?'':dl(s),s.notes||'']));
+  const body='\ufeff'+rows.map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\r\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([body],{type:'text/csv'}));a.download='photoprint-stores-'+new Date().toISOString().slice(0,10)+'.csv';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000);
+}
+
+/* ---------------- events ---------------- */
+document.addEventListener('click',async e=>{
+  const t=e.target,id=(t.closest('tr[data-id]')||{}).dataset&&t.closest('tr[data-id]').dataset.id;
+  try{
+    if(t.closest('[data-close]'))return closeLayer();
+    const f=t.closest('.st');if(f){filter=f.dataset.f;renderAll();return;}
+    if(t.closest('[data-open]')&&id)return openStore(id);
+    const gr=t.closest('[data-grant]');if(gr&&id)return openGrant([id]);
+    const cn=t.closest('[data-cancel]');if(cn&&id)return openCancel([id]);
+    if(t.closest('[data-pays]'))return paysModal();
+    if(t.closest('[data-undo]'))return undo();
+    if(G){const pc=t.closest('.pc');if(pc){G.sel=pc.dataset.i==='c'?'c':+pc.dataset.i;return gmUpdate();}const mc=t.closest('.mc');if(mc){G.mode=mc.dataset.m;return gmUpdate();}const pm=t.closest('.pm');if(pm){G.pay=pm.dataset.p;return gmUpdate();}}
+    if(K){const cr=t.closest('.cr');if(cr){document.querySelectorAll('.cr').forEach(x=>x.classList.remove('on'));cr.classList.add('on');K.reason=cr.textContent;return;}if(t.closest('#kGo'))return doCancel();}
+    if(t.closest('#gGo'))return doGrant();
+    const b=t.closest('[data-b]');if(b)return bulk(b.dataset.b);
+    /* drawer actions */
+    const s=stores.find(x=>x.id===openId);
+    if(s&&t.closest('#dr')){
+      const em=t.closest('[data-esmode] button');
+      if(em){const m=em.dataset.m,f=Object.assign({},feat(s));if(m==='auto')delete f.estamp;else f.estamp=(m==='yes');
+        try{await DB.upd(s.id,{features:f});}catch(er){toast('Run supabase-estamp.sql first (features column missing).');return;}
+        await DB.addLog(s.id,'edited','E-Stamp access: '+(m==='auto'?'default':m==='yes'?'allowed':'locked'));toast('E-Stamp access saved.');return load();}
+      const ex=t.closest('[data-ext]');
+      if(ex){const n=+ex.dataset.ext,base=Math.max(Date.now(),new Date(s.expires_at).getTime()),e=endOfDay(addDur(base,n,'days')).toISOString();
+        await DB.upd(s.id,{expires_at:e,renewal_requested_at:null});await DB.addLog(s.id,'edited','Trial extended +'+n+' days → '+fd(e));toast('+'+n+' days added.');return load();}
+      if(t.closest('[data-grant1]'))return openGrant([s.id]);
+      if(t.closest('[data-cancel1]'))return openCancel([s.id]);
+      if(t.closest('[data-now]')){if(!confirm('Expire access for '+s.store_name+' now?'))return;await DB.upd(s.id,{expires_at:new Date().toISOString()});await DB.addLog(s.id,'expired','Access ended by admin');return load();}
+      if(t.closest('[data-setdate]')){const v=$('dDate').value;if(!v){toast('Pick a date first.');return;}const [y,m,d]=v.split('-').map(Number);const iso=new Date(y,m-1,d,23,59,59).toISOString();await DB.upd(s.id,{expires_at:iso,renewal_requested_at:null});await DB.addLog(s.id,'edited','End date set to '+fd(iso));toast('End date updated.');return load();}
+      if(t.closest('[data-block]')){if(!confirm('Block '+s.store_name+'? They will be locked out on their next check.'))return;await DB.upd(s.id,{status:'blocked'});await DB.addLog(s.id,'blocked','Blocked by admin');return load();}
+      if(t.closest('[data-unblock]')){await DB.upd(s.id,{status:'active'});await DB.addLog(s.id,'unblocked','Unblocked by admin');return load();}
+      if(t.closest('[data-save]')){
+        const name=$('eName').value.trim(),w=norm($('eWa').value);if(name.length<2||w.length<11||w.length>15){toast('Check the store name and WhatsApp number.');return;}
+        try{await DB.upd(s.id,{store_name:name,whatsapp:w,plan:$('ePlan').value.trim()||'custom',notes:$('eNotes').value.trim()||null});}catch(er){toast(/duplicate|unique/i.test(er.message)?'This WhatsApp number already exists.':er.message);return;}
+        await DB.addLog(s.id,'edited','Details updated');toast('Saved.');return load();}
+      if(t.closest('[data-del]')){if(!confirm('Delete '+s.store_name+' permanently? Its history is deleted too.'))return;await DB.del(s.id);closeLayer();toast('Store deleted.');return load();}
+    }
+  }catch(er){toast(er.message||'Something went wrong.');}
+});
+document.addEventListener('change',e=>{
+  const t=e.target;
+  if(t.classList&&t.classList.contains('ck')){const id=t.closest('tr').dataset.id;t.checked?sel.add(id):sel.delete(id);renderRows();}
+  if(t.id==='chkAll'){view().forEach(s=>t.checked?sel.add(s.id):sel.delete(s.id));renderRows();}
+});
+async function bulk(a){
+  const ids=[...sel],list=stores.filter(s=>sel.has(s.id));
+  try{
+    if(a==='clear'){sel.clear();return renderRows();}
+    if(a==='grant')return openGrant(ids);
+    if(a==='cancel')return openCancel(ids);
+    if(a==='del'){if(!confirm('Delete '+ids.length+' store(s) permanently?'))return;await DB.del(ids);sel.clear();toast('Deleted.');return load();}
+    if(a==='block'||a==='unblock'){await DB.upd(ids,{status:a==='block'?'blocked':'active'});for(const s of list)await DB.addLog(s.id,a==='block'?'blocked':'unblocked','Bulk action');toast(ids.length+' updated.');return load();}
+  }catch(er){toast(er.message);}
+}
+
+/* ---------------- login ---------------- */
+function showApp(){
+  $('loginView').hidden=true;$('appView').hidden=false;
+  const b=$('modeBadge');b.textContent=cloud?'Cloud':'Demo (this browser only)';b.className='badge'+(cloud?'':' demo');
+  load();
+}
+function showLogin(){
+  $('appView').hidden=true;$('loginView').hidden=false;
+  $('cloudFields').hidden=!cloud;
+  $('loginSub').textContent=cloud?'Sign in to manage your stores.':'Demo mode: Supabase is not set up yet, so data is saved in this browser only.';
+  $('loginBtn').textContent=cloud?'Sign in':'Open demo admin';
+  $('aEmail').required=$('aPass').required=cloud;
+}
+function logout(silent){auth=null;localStorage.removeItem(AK);closeLayer();showLogin();if(!silent)toast('Logged out.');}
+$('loginForm').addEventListener('submit',async e=>{
+  e.preventDefault();$('loginErr').hidden=true;
+  if(!cloud){showApp();return;}
+  const btn=$('loginBtn');btn.disabled=true;btn.textContent='Signing in…';
+  try{
+    const r=await fetch(BASE+'/auth/v1/token?grant_type=password',{method:'POST',headers:{'Content-Type':'application/json',apikey:CFG.SUPABASE_KEY},body:JSON.stringify({email:$('aEmail').value.trim(),password:$('aPass').value})});
+    const j=await r.json();
+    if(!r.ok)throw new Error(r.status===400?'Wrong email or password.':(j.msg||j.error_description||'Could not sign in.'));
+    auth={access_token:j.access_token,refresh_token:j.refresh_token,email:$('aEmail').value.trim()};localStorage.setItem(AK,JSON.stringify(auth));
+    $('aPass').value='';showApp();
+  }catch(er){$('loginErr').hidden=false;$('loginErr').textContent=er.message==='Failed to fetch'?'Cannot reach Supabase. Check the URL and internet.':er.message;}
+  finally{btn.disabled=false;btn.textContent='Sign in';}
+});
+$('btnOut').onclick=()=>logout();
+$('btnRefresh').onclick=async()=>{await load();toast('Refreshed.');};
+$('btnSettings').onclick=settingsModal;$('btnAdd').onclick=addModal;$('btnCsv').onclick=csv;
+document.addEventListener('change',e=>{if(G&&e.target.id==='ppU')gmUpdate();});
+document.addEventListener('input',e=>{if(G&&e.target.id==='gAmt')gmUpdate();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeLayer();if(e.key==='/'&&!/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)){e.preventDefault();$('q').focus();}});
+
+document.addEventListener('input',e=>{if(G&&e.target.id==='ppN')gmUpdate();});
+$('planF').onchange=renderRows;
+$('q').oninput=renderRows;$('sort').onchange=renderRows;
+setInterval(()=>{if(!$('appView').hidden&&!$('layer').firstChild)load();},60000);
+addEventListener('storage',e=>{if(!cloud&&e.key===DK&&!$('appView').hidden&&!$('layer').firstChild)load();});
+
+(cloud?auth:true)?showApp():showLogin();
+})();
+</script>
+</body>
+</html>

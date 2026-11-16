@@ -8,6 +8,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" sizes="48x48" href="icons/favicon-48.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 :root{--ink:#16233f;--navy:#14295a;--gold:#f4b52e;--gold2:#ffd35f;--teal:#35e0bd;--bg:#e4e9f1;--hi:#fff;--lo:#bcc5d4;--muted:#5d6a7e;--r:22px;--raise:8px 8px 18px var(--lo),-8px -8px 18px var(--hi);--raise-s:4px 4px 10px var(--lo),-4px -4px 10px var(--hi);--inset:inset 4px 4px 9px var(--lo),inset -4px -4px 9px var(--hi)}
@@ -201,6 +204,14 @@ details.card[open]>summary{margin-bottom:14px}
 @keyframes esPing{0%{opacity:.9;transform:scale(1)}70%,100%{opacity:0;transform:scale(1.28,1.55)}}
 @keyframes esWig{0%,70%,100%{transform:translateZ(14px) rotate(0)}78%{transform:translateZ(14px) rotate(-14deg)}86%{transform:translateZ(14px) rotate(12deg)}94%{transform:translateZ(14px) rotate(-6deg)}}
 
+/* ---- E-Stamp cloud chip + locked card ---- */
+.escloud{display:inline-flex;align-items:center;gap:5px;margin-left:8px;padding:2px 9px;border-radius:99px;font-size:11.5px;font-weight:700;background:#e4efef;color:#256b86;vertical-align:middle}
+.escloud.ok{background:#dcf3e8;color:#17724f}.escloud.wait{background:#fff3d6;color:#8a5a00}.escloud.off{background:#eceff1;color:#5f6b7a}
+#esLock{position:fixed;inset:0;z-index:200;background:rgba(10,20,40,.55);display:grid;place-items:center;padding:18px}
+#esLock .box{background:#fff;border-radius:20px;max-width:380px;width:100%;padding:26px 22px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+#esLock h3{margin:10px 0 6px;font-size:20px}#esLock p{margin:0 0 16px;color:#5f6b7a;font-size:14.5px;line-height:1.5}
+#esLock .row{display:flex;gap:8px}#esLock .row>*{flex:1;text-align:center;padding:12px;border-radius:12px;font-weight:700;font-size:15px;text-decoration:none;border:0;cursor:pointer}
+#esLock .wa{background:#1f9d57;color:#fff}#esLock .no{background:#eceff1;color:#17353d}
 /* ---- E-Stamp register (folder cards + sheet) ---- */
 .es,.esm,.essn{--pri:#2f8f95;--pri2:#256b86;--ink:#17353d;--mut:#5f7b82;--line:#d2dfe2;--ok:#1d8f6a;--bad:#c4473a}
 .es{position:fixed;inset:0;z-index:140;overflow:auto;color:var(--ink);background:radial-gradient(900px 520px at 8% -8%,#d9efee,transparent 60%),radial-gradient(820px 520px at 100% 0,#e6e1f8,transparent 55%),radial-gradient(900px 600px at 50% 112%,#fbecd3,transparent 58%),#f3f8f8;animation:fade .2s}
@@ -470,12 +481,8 @@ tr.esd.cl .esdc{transform:rotate(-90deg)}
 </div></div>
 <div class="es" id="es" hidden role="dialog" aria-modal="true" aria-labelledby="esT"><div class="esw">
   <div class="eshd">
-    <div class="esttl"><span class="esti" data-ic="stamp" data-s="26"></span><div><h2 id="esT">E-Stamp Register</h2><p>Daily stamp sales, profit and customer ledger</p></div></div>
+    <div class="esttl"><span class="esti" data-ic="stamp" data-s="26"></span><div><h2 id="esT">E-Stamp Register</h2><p>Daily stamp sales, profit and customer ledger <span id="esCloud" class="escloud"></span></p></div></div>
     <div class="esha">
-      <button class="esb alt sm" id="esFolder" type="button" hidden><span data-ic="folder" data-s="16"></span><span class="lb">Data folder</span></button>
-      <button class="esb alt sm" id="esImp" type="button"><span data-ic="up" data-s="16"></span><span class="lb">Import</span></button>
-      <button class="esb alt sm" id="esCp" type="button"><span data-ic="copy" data-s="16"></span><span class="lb">Copy</span></button>
-      <button class="esb alt sm" id="esCsv" type="button"><span data-ic="down" data-s="16"></span><span class="lb">CSV</span></button>
       <button class="esb alt sm" id="esClose" type="button" aria-label="Close"><span data-ic="x" data-s="16"></span>Close</button>
     </div>
     <input type="file" id="esFile" accept=".csv,text/csv" hidden>
@@ -1032,7 +1039,7 @@ const LIC={
   SUPABASE_URL:'https://nxrrkmtzfntqvivvdbjb.supabase.co',      /* paste your Supabase Project URL here (same in admin.html) */
   SUPABASE_KEY:'sb_publishable_GE7trTVfwU2xTzAoTEGjOA_Wd5YQ_Kg',      /* paste your Supabase anon public key here (same in admin.html) */
   CONTACT_WA:'918124275007',
-  TRIAL_DAYS:25,        /* only used in demo mode; real value comes from the admin app settings */
+  TRIAL_DAYS:50,        /* only used in demo mode; real value comes from the admin app settings */
   OFFLINE_GRACE_DAYS:3
 };
 const $=id=>document.getElementById(id),DAY=864e5,SK='ppp_session',LK='ppp_last',DK='ppp_demo_db';
@@ -1083,6 +1090,13 @@ const api={
   request:async w=>cloud?rpc('app_request_renewal',{p_whatsapp:w}):demo.request(w)
 };
 
+/* ---- shared with E-Stamp: session + admin-controlled features ---- */
+const PPP=window.PPP={rpc,cloud,feat:null,wa:()=>S&&S.whatsapp,contact:()=>(S&&S.contact)||LIC.CONTACT_WA,store:()=>S&&S.store_name,active:()=>!!S&&S.state==='active'};
+async function loadFeat(){
+  if(!cloud||!S||S.state!=='active')return;
+  try{const r=await rpc('app_features',{p_whatsapp:S.whatsapp});PPP.feat=r&&r.ok?r:null;}catch(e){}
+  document.dispatchEvent(new Event('ppp-feat'));
+}
 /* ---- screens ---- */
 function view(v){['vLoad','vLogin','vLock'].forEach(id=>$(id).hidden=id!==v);$('gate').hidden=false;}
 function showLogin(err){
@@ -1133,7 +1147,7 @@ function apply(res){
   offset=new Date(res.now).getTime()-Date.now();
   S={whatsapp:res.whatsapp,store_name:res.store_name,expires_at:res.expires_at,state:res.state,plan:res.plan,contact:res.contact_whatsapp||LIC.CONTACT_WA,std:res.std_plan||'',stdPrice:res.std_price||'',checked_at:Date.now(),maxSeen:Math.max(Date.now()+offset,(S&&S.maxSeen)||0)};
   save();
-  if(res.state==='active')unlock();else lockScreen(res.state);
+  if(res.state==='active'){unlock();loadFeat();}else lockScreen(res.state);
   clearInterval(tick);tick=setInterval(heartbeat,60000);since=Date.now();
   return true;
 }
@@ -1150,7 +1164,7 @@ function heartbeat(){
   S.maxSeen=Math.max(S.maxSeen||0,Date.now()+offset);save();
   if(S.state==='active'&&now()>=new Date(S.expires_at).getTime()){lockScreen('expired');return;}
   if(S.state==='active')unlock();
-  if(Date.now()-since>10*60000){since=Date.now();api.login(S.store_name,S.whatsapp,false).then(r=>{if(r&&(r.state!==S.state||r.expires_at!==S.expires_at||!r.ok))apply(r);}).catch(()=>{});}
+  if(Date.now()-since>10*60000){since=Date.now();api.login(S.store_name,S.whatsapp,false).then(r=>{if(r&&(r.state!==S.state||r.expires_at!==S.expires_at||!r.ok))apply(r);else loadFeat();}).catch(()=>{});}
 }
 
 /* ---- events ---- */
@@ -1243,8 +1257,63 @@ async function fsSync(req){if(!DH)return;
       render();snack('Loaded '+D.length+' entries from your data folder');fsFlush();return;}}
   if(!j||lt>(j.updated||0))fsFlush();}
 const fsReady=FSOK?idb('readonly',st=>st.get('dir')).then(async h=>{if(h){DH=h;fsState=(await fsPerm(false))?'ok':'ask';}fsPaint();}).catch(()=>fsPaint()):Promise.resolve();
+/* ---- E-Stamp cloud (Supabase) : cloud = master copy, this device = fast offline cache ---- */
+const P=()=>window.PPP||{};
+const cloudOn=()=>!!(P().cloud&&P().feat&&P().feat.estamp&&P().wa());
+const qKey=()=>KEY()+'_q',snapKey=()=>KEY()+'_snap',initKey=()=>KEY()+'_cinit';
+let SNAP=new Map(),Q=[],syncing=false,qLoaded=false;const ensureQ=()=>{if(!qLoaded){qLoaded=true;loadQ();}};
+const sig=e=>[e.date,e.serial,e.phone,e.amount,e.profit,e.note||''].join('|');
+function loadQ(){try{Q=JSON.parse(localStorage.getItem(qKey())||'[]')||[];}catch(e){Q=[];}try{SNAP=new Map(JSON.parse(localStorage.getItem(snapKey())||'[]'));}catch(e){SNAP=new Map();}}
+function saveQ(){try{localStorage.setItem(qKey(),JSON.stringify(Q));localStorage.setItem(snapKey(),JSON.stringify([...SNAP]));}catch(e){}}
+function cloudChip(kind,txt){const c=$('esCloud');if(!c)return;c.className='escloud '+kind;c.textContent=txt;c.hidden=!txt;}
+/* compare register with what the cloud already knows, queue the difference */
+function diffQ(){
+  if(!P().cloud||!P().feat||!P().feat.estamp)return;
+  ensureQ();const now=new Map();
+  D.forEach(e=>{now.set(e.id,sig(e));if(SNAP.get(e.id)!==sig(e))Q=Q.filter(q=>!(q.op==='put'&&q.e.id===e.id)).concat({op:'put',e});});
+  SNAP.forEach((v,id)=>{if(!now.has(id)){Q=Q.filter(q=>!(q.op==='put'&&q.e.id===id));Q.push({op:'del',id});}});
+  SNAP=now;saveQ();
+}
+async function flushQ(){
+  const wa_=P().wa();if(!Q.length)return true;
+  const puts=Q.filter(q=>q.op==='put').map(q=>q.e),dels=Q.filter(q=>q.op==='del').map(q=>q.id);
+  if(dels.length){const r=await P().rpc('app_estamp_remove',{p_whatsapp:wa_,p_ids:dels});if(!r||!r.ok)return r&&r.error||'fail';}
+  for(let k=0;k<puts.length;k+=200){const r=await P().rpc('app_estamp_push',{p_whatsapp:wa_,p_entries:puts.slice(k,k+200)});if(!r||!r.ok)return r&&r.error||'fail';}
+  Q=[];saveQ();return true;
+}
+async function cloudSync(){
+  if(syncing||!cloudOn())return;syncing=true;cloudChip('wait','Syncing…');
+  try{
+    ensureQ();
+    const first=!localStorage.getItem(initKey());
+    if(first)SNAP=new Map();            /* first time: every local entry is uploaded once */
+    diffQ();
+    const f=await flushQ();
+    if(f!==true){cloudChip(f==='denied'?'wait':'off',f==='denied'?'Read-only · access ended':f==='locked'?'Locked by admin':'Offline · will sync');return;}
+    const r=await P().rpc('app_estamp_pull',{p_whatsapp:P().wa()});
+    if(!r||!r.ok){cloudChip('off',r&&r.error==='locked'?'Locked by admin':'Offline · will sync');return;}
+    const ch=r.entries.length!==D.length||r.entries.some(e=>{const m=D.find(x=>x.id===e.id);return !m||sig(m)!==sig(e);});
+    D=r.entries.map(e=>({id:e.id,date:e.date,serial:e.serial,phone:e.phone,amount:+e.amount,profit:+e.profit,note:e.note||'',ts:+e.ts||0}));
+    SNAP=new Map(D.map(e=>[e.id,sig(e)]));saveQ();
+    try{localStorage.setItem(initKey(),'1');localStorage.setItem(KEY(),JSON.stringify(D));}catch(e){}
+    cloudChip('ok','☁ Synced');
+    if(ch&&!$('es').hidden){render();fsSave();}
+  }catch(e){cloudChip('off','Offline · will sync');}
+  finally{syncing=false;}
+}
+let cT=0;const cloudKick=()=>{clearTimeout(cT);cT=setTimeout(cloudSync,900);};
+document.addEventListener('ppp-feat',()=>{if(!$('es').hidden)cloudSync();});
+window.addEventListener('focus',()=>{if(!$('es').hidden)cloudSync();});
+setInterval(()=>{if(!$('es').hidden&&$('esM').hidden)cloudSync();},60000);
+function esLocked(){
+  const m=P().contact?P().contact():'',txt='Hello! I am from '+(P().store?P().store():'my store')+'. Please enable E-Stamp for my PhotoPrint Pro account.';
+  const d=document.createElement('div');d.id='esLock';
+  d.innerHTML='<div class="box"><div style="color:#2f8f95">'+ic('stamp',44)+'</div><h3>E-Stamp is locked</h3><p>This feature is not enabled for your store yet. Message us on WhatsApp and we will switch it on.</p><div class="row"><a class="wa" target="_blank" rel="noopener" href="https://wa.me/'+m+'?text='+encodeURIComponent(txt)+'">WhatsApp</a><button class="no" type="button">Close</button></div></div>';
+  d.onclick=e=>{if(e.target===d||e.target.closest('.no')||e.target.closest('.wa'))d.remove();};
+  document.body.appendChild(d);
+}
 const load=()=>{try{D=JSON.parse(localStorage.getItem(KEY())||'[]')||[];}catch(e){D=[];}};
-const store=()=>{try{localStorage.setItem(KEY(),JSON.stringify(D));localStorage.setItem(tsKey(),String(Date.now()));fsSave();return true;}catch(e){fsSave();snack('Could not save. Browser storage is full or blocked.',null,null,true);return false;}};
+const store=()=>{try{localStorage.setItem(KEY(),JSON.stringify(D));localStorage.setItem(tsKey(),String(Date.now()));fsSave();diffQ();cloudKick();return true;}catch(e){fsSave();snack('Could not save. Browser storage is full or blocked.',null,null,true);return false;}};
 const pad=n=>String(n).padStart(2,'0');
 const iso=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
 const today=()=>iso(new Date());
@@ -1370,7 +1439,7 @@ function openForm(x,rep){reset();$('esDate').value=today();
     prev();}
   $('esM').hidden=false;setTimeout(()=>$(x&&rep?'esSerial':x?'esAmt':'esSerial').focus(),60);}
 function closeForm(){$('esM').hidden=true;}
-function open(){load();$('es').hidden=false;document.body.style.overflow='hidden';sel.clear();cur=null;render();fsPaint();fsReady.then(()=>fsSync(true)).then(()=>{if(FSOK&&!DH&&!localStorage.getItem('ppp_fs_asked')){try{localStorage.setItem('ppp_fs_asked','1');}catch(e){}fsPick(true);}});}
+function open(){if(P().feat&&P().feat.estamp===false){esLocked();return;}load();cloudChip('','');$('es').hidden=false;document.body.style.overflow='hidden';sel.clear();cur=null;render();fsPaint();fsReady.then(()=>fsSync(true)).then(()=>{cloudChip(cloudOn()?'wait':'off',cloudOn()?'Syncing…':'');return cloudSync();}).then(()=>{});}
 function close(){closeForm();$('es').hidden=true;document.body.style.overflow='';}
 $('esBtn').onclick=open;$('esClose').onclick=close;$('esAdd').onclick=()=>openForm();$('esCancel').onclick=closeForm;
 $('esM').addEventListener('mousedown',e=>{if(e.target===$('esM'))closeForm();});
@@ -1427,7 +1496,7 @@ $('esChips').addEventListener('click',e=>{const c=e.target.closest('.eschip');if
 ['esFrom','esTo'].forEach(i=>$(i).addEventListener('change',()=>{range='custom';document.querySelectorAll('.eschip').forEach(x=>x.classList.remove('on'));render();}));
 $('esGrp').onclick=()=>{group=!group;render();};
 /* export / import / copy */
-$('esCsv').onclick=()=>{const L=filtered();if(!L.length){snack('Nothing to export',null,null,true);return;}
+const _b4=$('esCsv');if(_b4)_b4.onclick=()=>{const L=filtered();if(!L.length){snack('Nothing to export',null,null,true);return;}
   const q=v=>'"'+String(v).replace(/"/g,'""')+'"';
   const csv=['Date,Serial No,Phone,Amount,Profit,Note'].concat(L.map(e=>[e.date,q(e.serial),e.phone,e.amount,e.profit,q(e.note||'')].join(','))).join('\n');
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv'}));a.download='estamp-'+today()+'.csv';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},500);};
@@ -1437,7 +1506,7 @@ function copyRows(list){
   const ok=()=>snack(list.length+(list.length===1?' row':' rows')+' copied. Paste into Excel or Sheets.');
   const fb=()=>{const a=document.createElement('textarea');a.value=t;a.style.cssText='position:fixed;opacity:0';document.body.appendChild(a);a.select();try{document.execCommand('copy');ok();}catch(x){snack('Copy failed',null,null,true);}a.remove();};
   if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(ok,fb);else fb();}
-$('esCp').onclick=()=>{const S=D.filter(x=>sel.has(x.id));copyRows(S.length?S:filtered());};
+const _b3=$('esCp');if(_b3)_b3.onclick=()=>{const S=D.filter(x=>sel.has(x.id));copyRows(S.length?S:filtered());};
 function parseCsv(t){const rows=[];let r=[],c='',q=false;t=t.replace(/^\ufeff/,'');
   for(let i=0;i<t.length;i++){const ch=t[i];
     if(q){if(ch==='"'){if(t[i+1]==='"'){c+='"';i++;}else q=false;}else c+=ch;}
@@ -1457,12 +1526,12 @@ async function fsPick(auto){
     DH=h;await idb('readwrite',st=>st.put(h,'dir'));fsState='ok';fsPaint();await fsSync(false);snack('Data folder set: '+h.name);}
   catch(e){if(auto)return;if(!e||e.name!=='AbortError')snack('Could not use that folder. Choose the PhotoPrint-Data folder inside Documents.',null,null,true);}
 }
-$('esFolder').onclick=async()=>{
+const _b1=$('esFolder');if(_b1)_b1.onclick=async()=>{
   if(DH&&fsState==='ask'){await fsSync(true);if(fsState==='ok'){snack('Folder access allowed');return;}}
   if(DH&&fsState==='ok'&&!confirm('Your data is saved in the folder "'+DH.name+'". Choose a different folder?'))return;
   fsPick(false);
 };
-$('esImp').onclick=()=>$('esFile').click();
+const _b2=$('esImp');if(_b2)_b2.onclick=()=>$('esFile').click();
 $('esFile').onchange=()=>{const f=$('esFile').files[0];$('esFile').value='';if(!f)return;const r=new FileReader();r.onload=()=>importCsv(String(r.result||''));r.readAsText(f);};
 /* keyboard */
 document.addEventListener('keydown',e=>{
